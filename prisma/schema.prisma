@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider   = "prisma-client"
+  engineType = "client"
+  output     = "../src/lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Topic {
+  id        String      @id @default(uuid())
+  name      String
+  status    TopicStatus
+  questions Question[]
+
+  @@map("topics")
+}
+
+enum TopicStatus {
+  ASKING_QUES
+  GETTING_ANS
+  GOT_ANS
+}
+
+model Question {
+  id        String   @id @default(uuid())
+  options   Option[]
+  answer    String
+  for_topic Topic?   @relation(fields: [topic_id], references: [id])
+  topic_id  String?
+
+  @@map("questions")
+}
+
+model Option {
+  id           Int       @id @default(autoincrement())
+  content      String
+  for_question Question? @relation(fields: [question_id], references: [id])
+  question_id  String?
+}
+
+model Outline {
+  id       String        @id @default(uuid())
+  status   OutlineStatus
+  chapters Chapter[]
+
+  @@map("outlines")
+}
+
+enum OutlineStatus {
+  GENERATING
+  GENERATED
+}
+
+model Chapter {
+  id          String   @id @default(uuid())
+  for_outline Outline? @relation(fields: [outline_id], references: [id])
+  outline_id  String?
+  lessons     Lesson[]
+
+  @@map("chapters")
+}
+
+model Lesson {
+  id          String       @id @default(uuid())
+  status      LessonStatus
+  for_chapter Chapter?     @relation(fields: [chapter_id], references: [id])
+  chapter_id  String?
+
+  @@map("lessons")
+}
+
+enum LessonStatus {
+  GENERATING
+  GENERATED
+}
