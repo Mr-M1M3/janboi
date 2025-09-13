@@ -1,3 +1,4 @@
+import type { ResponseData } from "$lib/types/ResponseData.type.js";
 import Maybe from "../maybe/maybe.util.js";
 
 export default class Result<T, E> {
@@ -65,5 +66,25 @@ export default class Result<T, E> {
   }
   public transform<To>(fn: (from: typeof this) => To): To {
     return fn(this);
+  }
+
+  public serialize(opt: {
+    error_type: "client" | "server";
+    message: string;
+    status: number;
+  }): ResponseData<T, E> {
+    if (this.is_ok()) {
+      return {
+        success: true,
+        data: this.unwrap() as T,
+      };
+    } else {
+      return {
+        success: false,
+        status: opt.status,
+        message: opt.message,
+        details: this.unwrap_err(),
+      };
+    }
   }
 }
