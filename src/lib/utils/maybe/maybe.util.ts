@@ -6,7 +6,7 @@ export default class Maybe<T> {
   }
   //useful methods
   public is_value(): boolean {
-    if (this.value === null) {
+    if (this.value !== null) {
       return true;
     } else {
       return false;
@@ -23,7 +23,7 @@ export default class Maybe<T> {
     }
   }
   public unwrap(): T {
-    return this.expect('Expected a value but didnt get one.')
+    return this.expect("Expected a value but didnt get one.");
   }
   public unwrap_or(def: T): T {
     if (this.is_value()) {
@@ -33,7 +33,7 @@ export default class Maybe<T> {
     }
   }
   public unwrap_or_else(fn: () => T): T {
-    return this.unwrap_or(fn())
+    return this.unwrap_or(fn());
   }
   public map<U>(fn: (v: T) => U): Maybe<U> {
     if (this.is_value()) {

@@ -1,9 +1,13 @@
 import prisma from "$lib/db.server";
-import { superValidate } from "sveltekit-superforms";
+import { superValidate, fail } from "sveltekit-superforms";
 import { valibot } from "sveltekit-superforms/adapters";
 import { TOPIC_PAYLOAD } from "./schemas/TopicPayload.schema.js";
 import { ClientError } from "$lib/utils/errors/client-error.util.js";
-import { error } from "@sveltejs/kit";
+import { error, isRedirect, redirect } from "@sveltejs/kit";
+import is_the_prompt_safe from "$lib/ai/safety-cheker.ai.js";
+import { ServerError } from "$lib/utils/errors/server-error.util.js";
+import { gen_ques_q } from "./producers/gen-ques.producer.js";
+import { GEN_QUES_U_PROMPT } from "$env/static/private";
 export async function load() {
   const form = await superValidate(valibot(TOPIC_PAYLOAD));
   return { form };
@@ -13,10 +17,31 @@ export const actions = {
   async generate_question({ request }) {
     const rec_data = await superValidate(request, valibot(TOPIC_PAYLOAD));
     if (!rec_data.valid) {
-      error(
-        400,
-        new ClientError(400, "bad request", {}).to_result().transform()
-      );
+      return fail(400, new ClientError(400, "bad request", {}).serilaize());
+    }
+    if (!(await is_the_prompt_safe(rec_data.data.topic))) {
+      return fail(400, new ClientError(400, "bad request", {}).serilaize());
+    }
+    try {
+      const topic = await prisma.topic.create({
+        data: {
+          name: rec_data.data.topic,
+          status: "ASKING_QUES",
+        },
+        select: {
+          id: true,
+        },
+      });
+      await gen_ques_q.add(topic.id, {
+        prompt: `${GEN_QUES_U_PROMPT} \n ${rec_data.data.topic}`,
+        for_topic: topic.id,
+      });
+      redirect(303, `/topics/${topic.id}`);
+    } catch (err) {
+      if (isRedirect(err)) {
+        throw err;
+      }
+      error(500, new ServerError(500, "internal server error", {}).serilaize());
     }
   },
 };

@@ -42,12 +42,16 @@
 			"@tailwindcss/oxide",
 			"better-sqlite3",
 			"esbuild",
+			"msgpackr-extract",
 			"prisma"
 		]
 	},
 	"dependencies": {
 		"@google/genai": "^1.19.0",
 		"@prisma/adapter-better-sqlite3": "^6.16.1",
-		"@prisma/client": "^6.16.1"
+		"@prisma/client": "^6.16.1",
+		"@valibot/to-json-schema": "^1.3.0",
+		"bullmq": "^5.58.5",
+		"ioredis": "^5.7.0"
 	}
 }

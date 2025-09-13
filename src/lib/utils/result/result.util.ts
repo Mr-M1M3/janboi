@@ -23,12 +23,6 @@ export default class Result<T, E> {
   public is_error(): boolean {
     return this.err.is_value();
   }
-  public ok_value(): Maybe<T> {
-    return this.ok;
-  }
-  public err_value(): Maybe<E> {
-    return this.err;
-  }
   public expect(msg: string): T {
     return this.ok.expect(msg);
   }
@@ -58,9 +52,9 @@ export default class Result<T, E> {
     err_mapper: (err: E) => Q
   ): Result<U, Q> {
     if (this.is_ok()) {
-      return Result.Ok<U, Q>(ok_mapper(this.ok_value().unwrap()));
+      return Result.Ok<U, Q>(ok_mapper(this.ok.unwrap()));
     } else {
-      return Result.Err<U, Q>(err_mapper(this.err_value().unwrap()));
+      return Result.Err<U, Q>(err_mapper(this.err.unwrap()));
     }
   }
   public map_ok<U>(fn: (val: T) => U): Result<U, E> {
