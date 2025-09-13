@@ -52,6 +52,8 @@ export async function load({ params }) {
       return Result.Err({}).serialize(501, "not implemented");
     }
   } catch (err) {
+    // TODO: LOG
+    console.error(err);
     error(
       500,
       Result.Err({}).serialize(500, "internal error") as ErrorResponseData<

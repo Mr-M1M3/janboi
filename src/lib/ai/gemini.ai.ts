@@ -1,6 +1,7 @@
-import { GEMINI_API_KEY } from "$env/static/private";
+import { config } from "dotenv";
 import { GoogleGenAI } from "@google/genai";
+config();
 const gemini = new GoogleGenAI({
-  apiKey: GEMINI_API_KEY,
+  apiKey: process.env.GEMINI_API_KEY,
 });
 export default gemini;

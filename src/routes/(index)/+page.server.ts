@@ -32,15 +32,31 @@ export const actions = {
           id: true,
         },
       });
-      await gen_ques_q.add(topic.id, {
-        prompt: `${GEN_QUES_U_PROMPT} \n ${rec_data.data.topic}`,
-        for_topic: topic.id,
-      });
+      await gen_ques_q.add(
+        topic.id,
+        {
+          topic: rec_data.data.topic,
+          for_topic: topic.id,
+        },
+        {
+          attempts: 3,
+          backoff: {
+            type: "fixed",
+            delay: 2,
+          },
+          removeOnComplete: true,
+          removeOnFail: {
+            age: 60 * 60 * 24 * 7,
+          },
+        }
+      );
       redirect(303, `/topics/${topic.id}`);
     } catch (err) {
       if (isRedirect(err)) {
         throw err;
       }
+      // TODO: LOG
+      console.error(err);
       error(
         500,
         Result.Err({}).serialize(500, "internal error") as ErrorResponseData<
