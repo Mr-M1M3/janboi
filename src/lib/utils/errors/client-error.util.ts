@@ -1,6 +1,6 @@
 import Result from "../result/result.util";
 
-type SerializedClientError<D extends Record<string, unknown>> = {
+export type SerializedClientError<D extends Record<string, unknown>> = {
   status: number;
   message: string;
   details: D;

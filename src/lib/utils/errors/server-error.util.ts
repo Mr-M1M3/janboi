@@ -1,6 +1,6 @@
 import Result from "../result/result.util";
 
-type SerializedServerError<D extends Record<string, unknown>> = {
+export type SerializedServerError<D extends Record<string, unknown>> = {
   id: string;
   status: number;
   message: string;
