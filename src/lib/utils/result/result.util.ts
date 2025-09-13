@@ -68,7 +68,7 @@ export default class Result<T, E> {
     return fn(this);
   }
 
-  public serialize(opt: {
+  public serialize(opt?: {
     error_type: "client" | "server";
     message: string;
     status: number;
@@ -81,8 +81,8 @@ export default class Result<T, E> {
     } else {
       return {
         success: false,
-        status: opt.status,
-        message: opt.message,
+        status: opt?.status || 0,
+        message: opt?.message || "",
         details: this.unwrap_err(),
       };
     }
