@@ -1,12 +1,11 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 
-import type { SerializedClientError } from "$lib/utils/errors/client-error.util";
-import { SerializedServerError } from "$lib/utils/errors/server-error.util";
+import type { ErrorResponseData } from "$lib/types/ResponseData.type";
 
 declare global {
   namespace App {
-    interface Error extends SerializedClientError, SerializedServerError {}
+    interface Error extends ErrorResponseData<unknown, unknown> {}
     // interface Locals {}
     // interface PageData {}
     // interface PageState {}

@@ -1,10 +1,7 @@
 import prisma from "$lib/db.server.js";
+import type { ErrorResponseData } from "$lib/types/ResponseData.type.js";
 import Result from "$lib/utils/result/result.util.js";
-import { isRedirect, redirect } from "@sveltejs/kit";
-import { gen_ques_q } from "../../(index)/producers/gen-ques.producer.js";
-import { error } from "console";
-import { NotFound } from "$lib/utils/errors/notfound.util.js";
-import { ServerError } from "$lib/utils/errors/server-error.util.js";
+import { error } from "@sveltejs/kit";
 
 export async function load({ params }) {
   // if the job already
@@ -33,26 +30,33 @@ export async function load({ params }) {
       },
     });
     if (!topic) {
-      return error(404, new NotFound().serilaize());
+      return error(
+        404,
+        Result.Err({}).serialize(404, "not found") as ErrorResponseData<
+          Record<never, never>
+        >
+      );
     }
     if (topic.status === "ASKING_QUES") {
       return Result.Ok({
         id: topic.id,
         name: topic.name,
         status: topic.status,
-      }).transform((from) => from.unwrap());
+      }).serialize();
     }
     if (topic.status === "GETTING_ANS") {
-      return Result.Ok(topic).transform((from) => from.unwrap());
+      return Result.Ok(topic).serialize();
     }
     if (topic.status === "GOT_ANS") {
       // todo
-      return Result.Err("not implemented").transform((from) => from.unwrap());
+      return Result.Err({}).serialize(501, "not implemented");
     }
   } catch (err) {
-    if (isRedirect(err)) {
-      throw err;
-    }
-    error(500, new ServerError(500, "internal error", {}));
+    error(
+      500,
+      Result.Err({}).serialize(500, "internal error") as ErrorResponseData<
+        Record<never, never>
+      >
+    );
   }
 }
