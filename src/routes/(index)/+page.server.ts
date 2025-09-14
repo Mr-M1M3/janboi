@@ -17,10 +17,16 @@ export const actions = {
   async generate_question({ request }) {
     const rec_data = await superValidate(request, valibot(TOPIC_PAYLOAD));
     if (!rec_data.valid) {
-      return fail(400, Result.Err({}).serialize(400, "bad request"));
+      return fail(
+        400,
+        Result.Err({ form: rec_data }).serialize(400, "bad request")
+      );
     }
     if (!(await is_the_prompt_safe(rec_data.data.topic))) {
-      return fail(400, Result.Err({}).serialize(400, "bad request"));
+      return fail(
+        400,
+        Result.Err({ form: rec_data }).serialize(400, "bad request")
+      );
     }
     try {
       const topic = await prisma.topic.create({

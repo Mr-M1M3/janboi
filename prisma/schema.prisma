@@ -18,7 +18,7 @@ datasource db {
 model Topic {
   id        String      @id @default(uuid())
   name      String
-  status    TopicStatus
+  status    TopicStatus @default(ASKING_QUES)
   questions Question[]
   outline   Outline?
 
@@ -36,7 +36,7 @@ model Question {
   title     String
   options   Option[]
   answer    String?
-  for_topic Topic    @relation(fields: [topic_id], references: [id])
+  for_topic Topic    @relation(fields: [topic_id], references: [id], onDelete: Cascade)
   topic_id  String
 
   @@map("questions")
@@ -45,15 +45,15 @@ model Question {
 model Option {
   id           Int       @id @default(autoincrement())
   content      String
-  for_question Question? @relation(fields: [question_id], references: [id])
+  for_question Question? @relation(fields: [question_id], references: [id], onDelete: Cascade)
   question_id  String?
 }
 
 model Outline {
   id       String        @id @default(uuid())
-  status   OutlineStatus
+  status   OutlineStatus @default(GENERATING)
   chapters Chapter[]
-  topic    Topic         @relation(fields: [topic_id], references: [id])
+  topic    Topic         @relation(fields: [topic_id], references: [id], onDelete: Cascade)
   topic_id String        @unique
 
   @@map("outlines")
@@ -66,7 +66,8 @@ enum OutlineStatus {
 
 model Chapter {
   id          String   @id @default(uuid())
-  for_outline Outline  @relation(fields: [outline_id], references: [id])
+  name        String
+  for_outline Outline  @relation(fields: [outline_id], references: [id], onDelete: Cascade)
   outline_id  String
   lessons     Lesson[]
 
@@ -75,8 +76,9 @@ model Chapter {
 
 model Lesson {
   id          String       @id @default(uuid())
-  status      LessonStatus
-  for_chapter Chapter      @relation(fields: [chapter_id], references: [id])
+  name        String
+  status      LessonStatus @default(GENERATING)
+  for_chapter Chapter      @relation(fields: [chapter_id], references: [id], onDelete: Cascade)
   chapter_id  String
 
   @@map("lessons")

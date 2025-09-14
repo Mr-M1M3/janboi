@@ -7,10 +7,11 @@ import {
   picklist,
   maxLength,
   type InferInput,
+  strictObject,
 } from "valibot";
 
 const QUESTION_TYPES = ["mcq", "short_answer", "boolean"] as const;
-const QUES_OUTPUT = object({
+export const QUES_OUTPUT_SCHEMA = strictObject({
   meta: pipe(string(), maxLength(256)),
   questions: array(
     object({
@@ -21,5 +22,5 @@ const QUES_OUTPUT = object({
   ),
 });
 
-export const QUES_OUTPUT_JSON_SCHEMA = toJsonSchema(QUES_OUTPUT);
-export type QUES_OUTPUT_FROM_AI = InferInput<typeof QUES_OUTPUT>;
+export const QUES_OUTPUT_JSON_SCHEMA = toJsonSchema(QUES_OUTPUT_SCHEMA);
+export type QUES_OUTPUT_FROM_AI = InferInput<typeof QUES_OUTPUT_SCHEMA>;
