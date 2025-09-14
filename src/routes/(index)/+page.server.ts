@@ -5,7 +5,6 @@ import { TOPIC_PAYLOAD } from "./schemas/TopicPayload.schema.js";
 import { error, isRedirect, redirect } from "@sveltejs/kit";
 import is_the_prompt_safe from "$lib/ai/safety-cheker.ai.js";
 import { gen_ques_q } from "./producers/gen-ques.producer.js";
-import { GEN_QUES_U_PROMPT } from "$env/static/private";
 import Result from "$lib/utils/result/result.util.js";
 import type { ErrorResponseData } from "$lib/types/ResponseData.type.js";
 export async function load() {

@@ -5,7 +5,6 @@ import { error, fail, isHttpError } from "@sveltejs/kit";
 import { superValidate, type SuperValidated } from "sveltekit-superforms";
 import { valibot } from "sveltekit-superforms/adapters";
 import { ANSWER_PAYLOAD } from "./schemas/AnswersPayload.schema.js";
-import { inspect } from "node:util";
 import type { Entries } from "$lib/types/Entries.type.js";
 import { PrismaClientKnownRequestError } from "$lib/generated/prisma/internal/prismaNamespace.js";
 import { gen_outline_q } from "./producers/gen-outline.producer.js";
@@ -128,7 +127,7 @@ export const actions = {
     }
     const payload = rec_data.data;
     try {
-      for (let [k, v] of Object.entries(payload) as Entries<typeof payload>) {
+      for (const [k, v] of Object.entries(payload) as Entries<typeof payload>) {
         if (k === "topic_id") {
           continue;
         }

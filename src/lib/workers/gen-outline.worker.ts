@@ -8,9 +8,8 @@ import type { Content } from "@google/genai";
 import {
   OUTLINE_OUTPUT_JSON_SCHEMA,
   OUTLINE_OUTPUT_SCHEMA,
-  type OUTLINE_OUTPUT_FROM_AI,
 } from "./schemas/OUTLINE_OUTPUT.schema";
-import { parse, safeParse } from "valibot";
+import { safeParse } from "valibot";
 config();
 type GenOutlinePayload = {
   topic_id: string;
@@ -42,7 +41,7 @@ async function gen_history_and_get_topic_name(
       history: Result.Err(Error("invalid topic id, topic was not found")),
     };
   }
-  let content: Content[] = [];
+  const content: Content[] = [];
   content.push({
     parts: [
       {
@@ -102,7 +101,6 @@ const outline_gen = new Worker<GenOutlinePayload, void, string>(
         OUTLINE_OUTPUT_SCHEMA,
         JSON.parse(outline_output.text || "")
       );
-      console.log(inspect(outline, true, null, true));
       if (outline.success) {
         for (const c of outline.output.chapters) {
           await prisma.outline.update({

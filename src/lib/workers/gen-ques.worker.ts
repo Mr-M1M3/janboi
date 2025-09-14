@@ -4,7 +4,6 @@ import { Worker } from "bullmq";
 import {
   QUES_OUTPUT_JSON_SCHEMA,
   QUES_OUTPUT_SCHEMA,
-  type QUES_OUTPUT_FROM_AI,
 } from "./schemas/QUES_OUTPUT.schema";
 import prisma from "$lib/db.server";
 import { inspect } from "node:util";
@@ -18,7 +17,6 @@ const ques_gen = new Worker<GenQuesPayload, void, string>(
   "gen-questions",
   async (job) => {
     try {
-      console.log(job.data);
       const questions = await gemini.models.generateContent({
         contents: `${process.env.GEN_QUES_U_PROMPT} \n ${job.data.topic}`,
         model: "gemini-2.0-flash",
