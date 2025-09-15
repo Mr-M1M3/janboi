@@ -18,7 +18,7 @@ datasource db {
 model Topic {
   id        String      @id @default(uuid())
   name      String
-  status    TopicStatus @default(ASKING_QUES)
+  status    TopicStatus @default(GENERATING_QUES)
   questions Question[]
   outline   Outline?
 
@@ -26,6 +26,7 @@ model Topic {
 }
 
 enum TopicStatus {
+  GENERATING_QUES
   ASKING_QUES
   GETTING_ANS
   GOT_ANS

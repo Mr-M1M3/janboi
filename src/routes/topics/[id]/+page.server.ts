@@ -8,8 +8,9 @@ import { ANSWER_PAYLOAD } from "./schemas/AnswersPayload.schema.js";
 import type { Entries } from "$lib/types/Entries.type.js";
 import { PrismaClientKnownRequestError } from "$lib/generated/prisma/internal/prismaNamespace.js";
 import { gen_outline_q } from "./producers/gen-outline.producer.js";
-export async function load({ params }) {
+export async function load({ params, depends }) {
   // if the job already done
+  depends("topic-state");
   try {
     const topic = await prisma.topic.findUnique({
       where: {
@@ -53,7 +54,7 @@ export async function load({ params }) {
       },
       { form: SuperValidated<ANSWER_PAYLOAD> }
     >;
-    if (topic.status === "ASKING_QUES") {
+    if (topic.status === "GENERATING_QUES") {
       return (
         Result.Ok({
           topic: {
@@ -159,6 +160,7 @@ export const actions = {
           )
         );
       } else {
+        console.log("generating outline");
         const { id: outline_id } = await prisma.outline.create({
           data: {
             status: "GENERATING",

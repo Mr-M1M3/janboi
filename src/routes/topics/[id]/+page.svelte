@@ -1,58 +1,56 @@
 <script lang="ts">
+  import { invalidate } from "$app/navigation";
+  import { browser } from "$app/environment";
   import { superForm } from "sveltekit-superforms";
-  import SuperDebug from "sveltekit-superforms";
-  import { page } from "$app/state";
+  import Questions from "./components/Questions.svelte";
+
   const { data } = $props();
-  let { form, enhance } = superForm(
+  console.log(data);
+  let interval;
+  if (browser && data.data?.topic.status === "GENERATING_QUES") {
+    interval = setInterval(() => {
+      console.log("invalidating");
+      invalidate("topic-state");
+    }, 2000);
+  } else {
+    clearInterval(interval);
+  }
+  let sf = superForm(
     data.data ? data.data.form : data.details ? data.details.form : {},
     {
       dataType: "json",
     }
   );
-  console.log(data);
-  // console.log("data");
-  // console.log(data);
-  // console.log("form");
-  // console.log(page.form);
-  // console.log("error");
-  // console.log(page.error);
+  const topic = data.data?.topic;
 </script>
 
-{#if data.success}
-  <h1 class="text-2xl font-bold capitalize">{data.data.topic.name}</h1>
-  {#if data.data.topic.status === "ASKING_QUES"}
-    <p>Generating questions for you. Please wait....</p>
-  {:else if data.data.topic.status === "GETTING_ANS"}
-    <p>questions:</p>
-    <SuperDebug data={$form} />
-    <form method="POST" action="?/answer" use:enhance>
-      {#each data.data.topic.questions as question (question.id)}
-        <div class="my-4 flex flex-col">
-          <label for={question.id}>{question.title}</label>
-          <datalist id={`datalist-${question.id}`} class="mx-4">
-            {#each question.options as option (option.id)}
-              <option>{option.content}</option>
-            {/each}
-          </datalist>
-          <input
-            list={`datalist-${question.id}`}
-            type="text"
-            name={question.id}
-            bind:value={$form[question.id]}
+<header class="w-full m-auto h-screen px-2 py-4">
+  {#if topic?.status === "GENERATING_QUES"}
+    <div class="h-full w-full flex gap-4 justify-center items-center">
+      <h1 class="d-loading d-loading-ring d-loading-xl">Loading...</h1>
+      <p>You can close this page and visit later...</p>
+    </div>
+  {/if}
+  {#if topic?.status === "GETTING_ANS"}
+    <div class="h-full d-card d-card-border">
+      <div class="d-card-body">
+        <div>
+          <h1 class="d-card-title text-2xl uppercase text-neutral">
+            {topic?.name}
+          </h1>
+          <p class="text-secondary">
+            Don't panic! These questions are just to figure out how much in deep
+            should I explain.
+          </p>
+        </div>
+        <div class="w-full h-full bg-red300">
+          <Questions
+            questions={topic.questions}
+            topic_id={data.data?.topic.id || ""}
+            {sf}
           />
         </div>
-      {/each}
-      <input
-        type="text"
-        name="topic_id"
-        bind:value={$form["topic_id"]}
-        readonly
-        hidden
-      />
-      <button
-        type="submit"
-        class="border bg-sky-600 text-white font-bold px-6 py-2">Submit</button
-      >
-    </form>
+      </div>
+    </div>
   {/if}
-{/if}
+</header>

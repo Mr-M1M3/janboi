@@ -10,13 +10,12 @@ import {
   strictObject,
 } from "valibot";
 
-const QUESTION_TYPES = ["mcq", "short_answer", "boolean"] as const;
 export const QUES_OUTPUT_SCHEMA = strictObject({
   meta: pipe(string(), maxLength(256)),
   questions: array(
     object({
       title: string(),
-      type: picklist(QUESTION_TYPES),
+      type: array(string()),
       options_or_suggestions: array(string()),
     })
   ),
