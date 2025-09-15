@@ -15,9 +15,11 @@ import { ANSWER_PAYLOAD } from "./schemas/AnswersPayload.schema.js";
 import type { Entries } from "$lib/types/Entries.type.js";
 import { PrismaClientKnownRequestError } from "$lib/generated/prisma/internal/prismaNamespace.js";
 import { gen_outline_q } from "./producers/gen-outline.producer.js";
+import { inspect } from "node:util";
 export async function load({ params, depends }) {
   // if the job already done
   depends("topic-state");
+  depends("outline-state");
   try {
     const topic = await prisma.topic.findUnique({
       where: {
@@ -38,6 +40,25 @@ export async function load({ params, depends }) {
               },
             },
             answer: true,
+          },
+        },
+        outline: {
+          select: {
+            status: true,
+            id: true,
+            chapters: {
+              select: {
+                id: true,
+                name: true,
+                lessons: {
+                  select: {
+                    id: true,
+                    name: true,
+                    status: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -69,6 +90,7 @@ export async function load({ params, depends }) {
             name: topic.name,
             status: topic.status,
             questions: [],
+            outline: null,
           },
           form,
         }) as LoadDataResult
@@ -83,12 +105,37 @@ export async function load({ params, depends }) {
       ).serialize();
     }
     if (topic.status === "GOT_ANS") {
-      // todo
-      return (Result.Err({ form }) as LoadDataResult).serialize(
-        501,
-        "not implemented",
-        form
-      );
+      if (topic.outline?.status === "GENERATING") {
+        return (
+          Result.Ok({
+            form,
+            topic: {
+              id: topic.id,
+              name: topic.name,
+              status: topic.status,
+              questions: [],
+              outline: {
+                id: topic.outline.id,
+                status: topic.outline?.status,
+                chapters: [],
+              },
+            },
+          }) as LoadDataResult
+        ).serialize();
+      } else {
+        return (
+          Result.Ok({
+            form,
+            topic: {
+              id: topic.id,
+              name: topic.name,
+              status: topic.status,
+              questions: [],
+              outline: topic.outline,
+            },
+          }) as LoadDataResult
+        ).serialize();
+      }
     }
   } catch (err) {
     // TODO: LOG
