@@ -24,7 +24,7 @@
     >;
   };
   const { questions, topic_id, sf }: Props = $props();
-  let { form, enhance } = sf;
+  let { form, enhance, constraints } = sf;
   let active_question_index = writable(0);
   let active_question = derived(active_question_index, ($i) => {
     return questions[$i].id;
@@ -93,6 +93,7 @@
         class="d-btn d-btn-ghost {$active_question_index === 0
           ? 'd-btn-disabled'
           : ''}"
+        type="button"
         onclick={back}
       >
         <Icon icon="lucide:arrow-left" />
@@ -101,6 +102,7 @@
         class="d-btn d-btn-soft {$active_question_index === questions.length - 1
           ? 'd-btn-disabled'
           : ''}"
+        type="button"
         onclick={next}
       >
         <Icon icon="lucide:arrow-right" />
@@ -160,6 +162,7 @@
                 ></textarea>
               </label>
               <button
+                type="button"
                 class="d-btn d-btn-block my-2 d-btn-neutral {$active_question_index ===
                 questions.length - 1
                   ? 'd-btn-disabled'

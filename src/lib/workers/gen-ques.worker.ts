@@ -73,15 +73,23 @@ const ques_gen = new Worker<GenQuesPayload, void, string>(
   }
 );
 
-ques_gen.on("failed", (job, err) => {
+ques_gen.on("failed", async (job, err) => {
   // TODO: log the error
+  await prisma.topic.update({
+    where: {
+      id: job?.data.for_topic,
+    },
+    data: {
+      status: "FAILED",
+    },
+  });
   console.error(`job ${job?.id} failed: ${inspect(err, true, null, true)}`);
 });
 
 ques_gen.on("error", (err) => {
   // TODO: log the error
   console.error(
-    `an error occurred while on the bull worker: ${inspect(
+    `an error occurred while generating question on the bull worker: ${inspect(
       err,
       true,
       null,

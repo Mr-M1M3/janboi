@@ -18,20 +18,19 @@ export const actions = {
     if (!rec_data.valid) {
       return fail(
         400,
-        Result.Err({ form: rec_data }).serialize(400, "bad request")
+        Result.Err({ form: rec_data }).serialize(400, "bad request", rec_data)
       );
     }
     if (!(await is_the_prompt_safe(rec_data.data.topic))) {
       return fail(
         400,
-        Result.Err({ form: rec_data }).serialize(400, "bad request")
+        Result.Err({ form: rec_data }).serialize(400, "bad request", rec_data)
       );
     }
     try {
       const topic = await prisma.topic.create({
         data: {
           name: rec_data.data.topic,
-          status: "ASKING_QUES",
         },
         select: {
           id: true,

@@ -5,9 +5,13 @@ export type ErrorResponseData<D> = {
   status: number;
   message: string;
   details: D;
+  superform?: Record<string, unknown>;
 };
 
 export type OkResponseData<T> = {
   success: true;
   data: T;
+  status?: number;
+  message?: string;
+  superform?: Record<string, unknown>;
 };

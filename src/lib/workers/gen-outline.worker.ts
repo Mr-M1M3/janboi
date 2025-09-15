@@ -144,15 +144,23 @@ const outline_gen = new Worker<GenOutlinePayload, void, string>(
   }
 );
 
-outline_gen.on("failed", (job, err) => {
+outline_gen.on("failed", async (job, err) => {
   // TODO: log the error
+  await prisma.outline.update({
+    where: {
+      id: job?.data.outline_id,
+    },
+    data: {
+      status: "FAILED",
+    },
+  });
   console.error(`job ${job?.id} failed: ${inspect(err, true, null, true)}`);
 });
 
 outline_gen.on("error", (err) => {
   // TODO: log the error
   console.error(
-    `an error occurred while on the bull worker: ${inspect(
+    `an error occurred while generating outline on the bull worker: ${inspect(
       err,
       true,
       null,

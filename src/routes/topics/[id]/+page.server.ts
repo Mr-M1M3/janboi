@@ -1,8 +1,15 @@
 import prisma from "$lib/db.server.js";
-import type { ErrorResponseData } from "$lib/types/ResponseData.type.js";
+import type {
+  ErrorResponseData,
+  ResponseData,
+} from "$lib/types/ResponseData.type.js";
 import Result from "$lib/utils/result/result.util.js";
 import { error, fail, isHttpError } from "@sveltejs/kit";
-import { superValidate, type SuperValidated } from "sveltekit-superforms";
+import {
+  superValidate,
+  type SuperValidated,
+  message,
+} from "sveltekit-superforms";
 import { valibot } from "sveltekit-superforms/adapters";
 import { ANSWER_PAYLOAD } from "./schemas/AnswersPayload.schema.js";
 import type { Entries } from "$lib/types/Entries.type.js";
@@ -79,7 +86,8 @@ export async function load({ params, depends }) {
       // todo
       return (Result.Err({ form }) as LoadDataResult).serialize(
         501,
-        "not implemented"
+        "not implemented",
+        form
       );
     }
   } catch (err) {
@@ -99,11 +107,12 @@ export async function load({ params, depends }) {
 
 export const actions = {
   async answer({ request }) {
+    console.log("running actions");
     const rec_data = await superValidate(request, valibot(ANSWER_PAYLOAD));
     if (!rec_data.valid) {
       return fail(
         400,
-        Result.Err({ form: rec_data }).serialize(400, "invalid data")
+        Result.Err({ form: rec_data }).serialize(400, "invalid data", rec_data)
       );
     }
     if (
@@ -112,7 +121,7 @@ export const actions = {
     ) {
       return fail(
         400,
-        Result.Err({ form: rec_data }).serialize(400, "invalid data")
+        Result.Err({ form: rec_data }).serialize(400, "invalid data", rec_data)
       );
     }
     const topic_exists = await prisma.topic.count({
@@ -123,7 +132,7 @@ export const actions = {
     if (!topic_exists) {
       return fail(
         400,
-        Result.Err({ form: rec_data }).serialize(400, "invalid data")
+        Result.Err({ form: rec_data }).serialize(400, "invalid data", rec_data)
       );
     }
     const payload = rec_data.data;
@@ -156,7 +165,8 @@ export const actions = {
           400,
           Result.Err({ form: rec_data }).serialize(
             400,
-            "you have some questions left to answer"
+            "you have some questions left to answer",
+            rec_data
           )
         );
       } else {
@@ -185,14 +195,24 @@ export const actions = {
             },
           }
         );
-        await prisma.topic.update({
+        const updated = await prisma.topic.update({
           where: {
             id: payload.topic_id as string,
           },
           data: {
             status: "GOT_ANS",
           },
+          select: {
+            id: true,
+            name: true,
+            status: true,
+          },
         });
+        return Result.Ok(updated).serialize(
+          200,
+          "your outline is being generated",
+          rec_data
+        );
       }
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError) {
@@ -201,7 +221,8 @@ export const actions = {
             400,
             Result.Err({ form: rec_data }).serialize(
               400,
-              "some of the questions you tried to answer to are not valid"
+              "some of the questions you tried to answer to are not valid",
+              rec_data
             )
           );
         }

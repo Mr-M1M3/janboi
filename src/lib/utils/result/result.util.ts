@@ -68,11 +68,18 @@ export default class Result<T, E> {
     return fn(this);
   }
 
-  public serialize(status?: number, message?: string): ResponseData<T, E> {
+  public serialize(
+    status?: number,
+    message?: string,
+    superform?: Record<string, unknown>
+  ): ResponseData<T, E> {
     if (this.is_ok()) {
       return {
         success: true,
         data: this.unwrap() as T,
+        status,
+        message,
+        superform,
       };
     } else {
       return {
@@ -80,6 +87,7 @@ export default class Result<T, E> {
         status: status || 0,
         message: message || "",
         details: this.unwrap_err(),
+        superform,
       };
     }
   }

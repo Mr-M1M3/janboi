@@ -27,9 +27,9 @@ model Topic {
 
 enum TopicStatus {
   GENERATING_QUES
-  ASKING_QUES
   GETTING_ANS
   GOT_ANS
+  FAILED
 }
 
 model Question {
@@ -63,6 +63,7 @@ model Outline {
 enum OutlineStatus {
   GENERATING
   GENERATED
+  FAILED
 }
 
 model Chapter {
@@ -78,7 +79,7 @@ model Chapter {
 model Lesson {
   id          String       @id @default(uuid())
   name        String
-  status      LessonStatus @default(GENERATING)
+  status      LessonStatus @default(WAITING_FOR_APPROVAL)
   for_chapter Chapter      @relation(fields: [chapter_id], references: [id], onDelete: Cascade)
   chapter_id  String
 
@@ -86,6 +87,8 @@ model Lesson {
 }
 
 enum LessonStatus {
+  WAITING_FOR_APPROVAL
   GENERATING
   GENERATED
+  FAILED
 }
