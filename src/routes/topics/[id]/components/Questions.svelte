@@ -24,7 +24,7 @@
     >;
   };
   const { questions, topic_id, sf }: Props = $props();
-  let { form, enhance, constraints } = sf;
+  let { form, enhance } = sf;
   let active_question_index = writable(0);
   let active_question = derived(active_question_index, ($i) => {
     return questions[$i].id;
@@ -132,12 +132,16 @@
                 <p class="text-base-content my-2 relative left-2">
                   Suggestions:
                 </p>
-                <ul class="d-list">
+                <ul class="d-list gap-2">
                   {#each question.options as suggestion (suggestion.id)}
                     <!-- svelte-ignore a11y_click_events_have_key_events -->
                     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
                     <li
-                      class="d-rounded-box text-secondary d-list-row hover:bg-base-200 cursor-pointer"
+                      class="d-rounded-box d-list-row cursor-pointer
+                      {String($form[question.id as string]).toLowerCase() ===
+                      String(suggestion.content).toLowerCase()
+                        ? 'bg-neutral text-neutral-content'
+                        : 'text-secondary hover:bg-base-200 hover:text-base-content'}"
                       onclick={() => {
                         $form[question.id as string] =
                           suggestion.content as string;
@@ -151,9 +155,7 @@
             {/if}
             <div class="flex-grow my-2">
               <label for="textarea-${question.id}">
-                <span class="text-base-content"
-                  >Or, you can write your own answer</span
-                >
+                <span class="text-base-content">Write your own answer:</span>
                 <textarea
                   name={question.id as string}
                   bind:value={$form[question.id as string]}

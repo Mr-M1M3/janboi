@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { invalidate, invalidateAll } from "$app/navigation";
-  import { browser } from "$app/environment";
+  import { invalidate } from "$app/navigation";
   import { superForm } from "sveltekit-superforms";
   import Questions from "./components/Questions.svelte";
   import { Toaster, toast } from "svelte-sonner";
@@ -45,7 +44,7 @@
 
 <Toaster richColors />
 {#key data}
-  <header class="w-full m-auto h-screen px-2 py-4">
+  <header class="w-full m-auto h-full px-2 py-4">
     {#if topic?.status === "GENERATING_QUES"}
       <div class="h-full w-full flex gap-4 justify-center items-center">
         <h1 class="d-loading d-loading-ring d-loading-xl">Loading...</h1>

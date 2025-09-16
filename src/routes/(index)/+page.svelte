@@ -5,7 +5,7 @@
   const { form, constraints } = superForm(data.form);
 </script>
 
-<div class="w-full px-4 h-screen flex flex-col justify-center items-center">
+<div class="w-full px-4 h-full flex flex-col justify-center items-center">
   <div>
     <h4 class="text-4xl font-extrabold">What can help you learn? 😎</h4>
     <p class="text-secondary ext-right">
