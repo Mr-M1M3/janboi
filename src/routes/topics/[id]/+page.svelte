@@ -1,33 +1,38 @@
 <script lang="ts">
-  import { invalidate } from "$app/navigation";
+  import { invalidate, invalidateAll } from "$app/navigation";
   import { browser } from "$app/environment";
   import { superForm } from "sveltekit-superforms";
   import Questions from "./components/Questions.svelte";
   import { Toaster, toast } from "svelte-sonner";
   import Outline from "./components/Outline.svelte";
   const { data, form } = $props();
+  let topic_interval: ReturnType<typeof setInterval>;
+  let outline_interval: ReturnType<typeof setInterval>;
+  let topic = $derived(data.data?.topic);
+  let outline = $derived(topic?.outline);
   $effect(() => {
     if (form && !form.success) {
       toast.error(form.message.toUpperCase());
     }
-    console.log(data);
-  });
-  let interval: ReturnType<typeof setInterval>;
-  let topic = $derived(data.data?.topic);
-  if (browser) {
-    interval = setInterval(() => {
-      if (topic?.status === "GENERATING_QUES") {
+    if (topic?.status === "GENERATING_QUES") {
+      topic_interval = setInterval(() => {
         invalidate("topic-state");
-      } else if (
-        topic?.status === "GOT_ANS" &&
-        topic.outline?.status === "GENERATING"
-      ) {
+      }, 2000);
+    } else {
+      clearInterval(topic_interval);
+    }
+    if (outline?.status === "GENERATING") {
+      outline_interval = setInterval(() => {
         invalidate("outline-state");
-      } else {
-        clearInterval(interval);
-      }
-    }, 2000);
-  }
+      }, 2000);
+    } else {
+      clearInterval(outline_interval);
+    }
+    return () => {
+      clearInterval(topic_interval);
+      clearInterval(outline_interval);
+    };
+  });
   let sf = $derived(
     superForm(
       data.data ? data.data.form : data.details ? data.details.form : {},

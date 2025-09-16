@@ -1,21 +1,13 @@
 import prisma from "$lib/db.server.js";
-import type {
-  ErrorResponseData,
-  ResponseData,
-} from "$lib/types/ResponseData.type.js";
+import type { ErrorResponseData } from "$lib/types/ResponseData.type.js";
 import Result from "$lib/utils/result/result.util.js";
 import { error, fail, isHttpError } from "@sveltejs/kit";
-import {
-  superValidate,
-  type SuperValidated,
-  message,
-} from "sveltekit-superforms";
+import { superValidate, type SuperValidated } from "sveltekit-superforms";
 import { valibot } from "sveltekit-superforms/adapters";
 import { ANSWER_PAYLOAD } from "./schemas/AnswersPayload.schema.js";
 import type { Entries } from "$lib/types/Entries.type.js";
 import { PrismaClientKnownRequestError } from "$lib/generated/prisma/internal/prismaNamespace.js";
 import { gen_outline_q } from "./producers/gen-outline.producer.js";
-import { inspect } from "node:util";
 export async function load({ params, depends }) {
   // if the job already done
   depends("topic-state");
@@ -154,7 +146,6 @@ export async function load({ params, depends }) {
 
 export const actions = {
   async answer({ request }) {
-    console.log("running actions");
     const rec_data = await superValidate(request, valibot(ANSWER_PAYLOAD));
     if (!rec_data.valid) {
       return fail(
@@ -217,7 +208,6 @@ export const actions = {
           )
         );
       } else {
-        console.log("generating outline");
         const { id: outline_id } = await prisma.outline.create({
           data: {
             status: "GENERATING",

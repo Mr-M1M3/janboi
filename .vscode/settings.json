@@ -1,7 +1,7 @@
 {
-    "[prisma]": {
-        "editor.defaultFormatter": "Prisma.prisma",
-        "editor.formatOnSave": true,
-        
-    },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma",
+    "editor.formatOnSave": true
+  },
+  "editor.formatOnSave": true
 }
