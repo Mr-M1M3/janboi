@@ -16,6 +16,7 @@ type GenQuesPayload = {
 const ques_gen = new Worker<GenQuesPayload, void, string>(
   "gen-questions",
   async (job) => {
+    // eslint-disable-next-line no-useless-catch
     try {
       const questions = await gemini.models.generateContent({
         contents: `${process.env.GEN_QUES_U_PROMPT} \n ${job.data.topic}`,
@@ -54,6 +55,7 @@ const ques_gen = new Worker<GenQuesPayload, void, string>(
           },
           data: {
             status: "GETTING_ANS",
+            meta: generated_questions.output.meta,
           },
         });
       } else {

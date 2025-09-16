@@ -84,6 +84,7 @@ const outline_gen = new Worker<GenOutlinePayload, void, string>(
     const history_and_name = await gen_history_and_get_topic_name(
       job.data.topic_id
     );
+    // eslint-disable-next-line no-useless-catch
     try {
       const chat = gemini.chats.create({
         history: history_and_name.history.unwrap(),

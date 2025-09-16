@@ -55,8 +55,8 @@
       <div class="h-full d-card d-card-border">
         <div class="d-card-body">
           <div>
-            <h1 class="d-card-title text-2xl uppercase text-neutral">
-              {topic?.name}
+            <h1 class="d-card-title text-2xl text-neutral">
+              {topic?.meta || topic?.name}
             </h1>
             <p class="text-secondary">
               Don't panic! These questions are just to figure out how much in
@@ -82,7 +82,7 @@
       {/if}
       {#if topic.outline?.status === "GENERATED"}
         <div class="prose">
-          <h2 class="uppercase">{topic.name}</h2>
+          <h2>{topic?.meta || topic?.name}</h2>
           <Outline outline={topic.outline} />
         </div>
       {/if}

@@ -28,7 +28,7 @@
     <div class="d-collapse-content text-sm">
       {#each chapter.lessons as lesson, l_i (lesson.id)}
         <a
-          href="{page.url.pathname}/{lesson.name.replaceAll(' ', '-')}"
+          href="{page.url.pathname}/lesson/{lesson.id}"
           class="d-btn d-btn-block d-btn-outline my-2"
         >
           {lesson.name}

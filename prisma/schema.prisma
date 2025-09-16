@@ -18,6 +18,7 @@ datasource db {
 model Topic {
   id        String      @id @default(uuid())
   name      String
+  meta      String?
   status    TopicStatus @default(GENERATING_QUES)
   questions Question[]
   outline   Outline?
@@ -80,6 +81,7 @@ model Lesson {
   id          String       @id @default(uuid())
   name        String
   status      LessonStatus @default(WAITING_FOR_APPROVAL)
+  content     String?
   for_chapter Chapter      @relation(fields: [chapter_id], references: [id], onDelete: Cascade)
   chapter_id  String
 

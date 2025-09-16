@@ -52,13 +52,13 @@
   <div class="wrapper flex flex-row gap-2 h-[calc(100%-3rem-1rem)]">
     {#key is_sidebar_active}
       <div
-        class="sidebar w-xl overflow-hidden relative {is_sidebar_active
+        class="sidebar w-xl lg:w-sm overflow-hidden relative {is_sidebar_active
           ? ''
           : 'hidden'} lg:block"
         transition:sidebar_transition|global
       >
         <ul
-          class="d-menu w-xl h-full overflow-y-auto overflow-x-hidden rounded-box"
+          class="d-menu w-xl lg:w-sm h-full overflow-y-auto overflow-x-hidden rounded-box"
         >
           {#if data.data}
             <li>

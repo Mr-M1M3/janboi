@@ -21,6 +21,7 @@ export async function load({ params, depends }) {
         status: true,
         id: true,
         name: true,
+        meta: true,
         questions: {
           select: {
             id: true,
@@ -83,6 +84,7 @@ export async function load({ params, depends }) {
             status: topic.status,
             questions: [],
             outline: null,
+            meta: topic.meta,
           },
           form,
         }) as LoadDataResult
@@ -105,6 +107,7 @@ export async function load({ params, depends }) {
               id: topic.id,
               name: topic.name,
               status: topic.status,
+              meta: topic.meta,
               questions: [],
               outline: {
                 id: topic.outline.id,
@@ -121,6 +124,7 @@ export async function load({ params, depends }) {
             topic: {
               id: topic.id,
               name: topic.name,
+              meta: topic.meta,
               status: topic.status,
               questions: [],
               outline: topic.outline,
@@ -243,6 +247,7 @@ export const actions = {
             id: true,
             name: true,
             status: true,
+            meta: true,
           },
         });
         return Result.Ok(updated).serialize(
