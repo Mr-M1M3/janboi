@@ -12,6 +12,11 @@ type GenQuesPayload = {
   topic: string;
   for_topic: string;
 };
+
+import Redis from "ioredis"
+const connection = new Redis(config.redis.url ?? "", {
+  maxRetriesPerRequest: null
+});
 const ques_gen = new Worker<GenQuesPayload, void, string>(
   "gen-questions",
   async (job) => {
@@ -67,10 +72,7 @@ const ques_gen = new Worker<GenQuesPayload, void, string>(
     }
   },
   {
-    connection: {
-      host: "localhost",
-      port: 6379,
-    },
+    connection
   }
 );
 

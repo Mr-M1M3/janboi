@@ -15,6 +15,10 @@ type GenOutlinePayload = {
   outline_id: string;
 };
 
+import Redis from "ioredis"
+const connection = new Redis(config.redis.url ?? "", {
+  maxRetriesPerRequest: null
+});
 async function gen_history_and_get_topic_name(
   topic_id: string
 ): Promise<{ topic_name: string; history: Result<Content[], unknown> }> {
@@ -137,11 +141,9 @@ const outline_gen = new Worker<GenOutlinePayload, void, string>(
     }
   },
   {
-    connection: {
-      host: "localhost",
-      port: 6379,
-    },
-  }
+  connection
+  },
+
 );
 
 outline_gen.on("failed", async (job, err) => {

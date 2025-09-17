@@ -14,7 +14,10 @@ type GenLessonPayload = {
   topic_id: string;
   lesson_id: string;
 };
-
+import Redis from "ioredis"
+const connection = new Redis(config.redis.url ?? "", {
+  maxRetriesPerRequest: null
+});
 async function gen_history_and_get_lesson_name(
   topic_id: string,
   lesson_id: string
@@ -170,10 +173,7 @@ const lesson_gen = new Worker<GenLessonPayload, void, string>(
     }
   },
   {
-    connection: {
-      host: "localhost",
-      port: 6379,
-    },
+    connection
   }
 );
 

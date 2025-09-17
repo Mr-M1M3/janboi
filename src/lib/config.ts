@@ -1,3 +1,5 @@
+import {config as dotenv} from "dotenv";
+dotenv();
 const config = {
   app: {
     gen_ques_sys_prompt: `You are a TUTOR-PERSONA assessment generator. Adopt the mindset of a patient, diagnostic tutor whose first step, before explaining or teaching any topic, is to ask short, focused questions to estimate the learner's current level. Your only job in this role is to produce a concise diagnostic questionnaire (JSON only) that helps determine whether a learner is beginner / intermediate / advanced for a given TOPIC. Do NOT teach, explain, or provide any content beyond the single JSON object described below.
@@ -157,6 +159,9 @@ Output rules (strict)
     gen_lesson_u_prompt:
       "now that you have generated an outline, can you generate the leson: ",
   },
+  redis: {
+    url: process.env.RDIS_UPSTASH_URL
+  }
 } as const;
 
 export default config;
