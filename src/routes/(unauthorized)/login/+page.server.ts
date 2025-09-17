@@ -1,3 +1,4 @@
+import config from "$lib/config.js";
 import { redirect } from "@sveltejs/kit";
 
 export async function load({ locals }) {
