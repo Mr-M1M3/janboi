@@ -31,7 +31,7 @@ export async function load({ params, depends, locals }) {
           topic: {
             id: topic_id,
             user: {
-              id: locals.session?.user.id,
+              id: locals.session?.user.id ?? "",
             },
           },
         },
@@ -64,7 +64,7 @@ export const actions = {
               topic: {
                 id: topic_id,
                 user: {
-                  id: locals.session?.user.id,
+                  id: locals.session?.user.id ?? "",
                 },
               },
             },

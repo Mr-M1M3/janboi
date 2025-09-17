@@ -33,7 +33,7 @@ export const actions = {
           name: rec_data.data.topic,
           user: {
             connect: {
-              id: locals.session?.user.id,
+              id: locals.session?.user.id ?? "",
             },
           },
         },

@@ -44,7 +44,7 @@
   <div class="wrapper flex gap-2 py-4">
     <div>
       <button onclick={nav_back} class="d-btn d-btn-ghost"
-        ><Icon icon="mdi:arrow-left" class="text-xl" /></button
+        ><Icon icon="lucide:arrow-left" class="text-xl" /></button
       >
     </div>
     <div class="prose grow">

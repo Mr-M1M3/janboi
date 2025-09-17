@@ -17,7 +17,7 @@ export async function load({ params, depends, locals }) {
       where: {
         id: params.id,
         user: {
-          id: locals.session?.user.id,
+          id: locals.session?.user.id ?? "",
         },
       },
       select: {
@@ -173,7 +173,7 @@ export const actions = {
       where: {
         id: rec_data.data.topic_id as string,
         user: {
-          id: locals.session?.user.id,
+          id: locals.session?.user.id ?? "",
         },
       },
     });
@@ -246,7 +246,7 @@ export const actions = {
           where: {
             id: payload.topic_id as string,
             user: {
-              id: locals.session?.user.id,
+              id: locals.session?.user.id ?? "",
             },
           },
           data: {
