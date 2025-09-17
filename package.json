@@ -4,16 +4,20 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
+    "dev": "pnpm migrate:dev && concurrently 'pnpm:worker:*' 'vite dev'",
+    "build": "pnpm migrate:prod && vite build",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "eslint .",
     "gen:db": "prisma generate",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:prod": "prisma db push",
     "worker:gen-ques": "tsx src/lib/workers/gen-ques.worker.ts",
-    "start": "concurrently 'tsx src/lib/workers/gen-ques.worker.ts' 'tsx src/lib/workers/gen-outline.worker.ts' 'tsx src/lib/workers/gen-lesson.worker.ts' 'vite build'"
+    "worker:gen-outline": "tsx src/lib/workers/gen-outline.worker.ts",
+    "worker:gen-lesson": "tsx src/lib/workers/gen-lesson.worker.ts",
+    "start": "concurrently 'pnpm:worker:*' 'vite preview'"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.5",
