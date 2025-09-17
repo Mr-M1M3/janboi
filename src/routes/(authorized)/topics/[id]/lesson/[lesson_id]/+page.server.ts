@@ -38,7 +38,7 @@ export async function load({ params, depends, locals }) {
       },
     },
   });
-  console.log(lesson);
+
   if (!lesson) {
     return error(
       404,

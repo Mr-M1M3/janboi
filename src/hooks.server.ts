@@ -14,6 +14,6 @@ export async function handle({ event, resolve }) {
 }
 
 export async function handleError(e) {
-  console.log("error from handle error hook");
+  console.error("error from handle error hook");
   console.error(inspect(e, true, null, true));
 }

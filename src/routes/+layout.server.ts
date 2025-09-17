@@ -2,7 +2,6 @@ import prisma from "$lib/db.server";
 import Result from "$lib/utils/result/result.util";
 
 export async function load({ locals }) {
-  console.log(locals);
   const topics = await prisma.topic.findMany({
     where: {
       user: {

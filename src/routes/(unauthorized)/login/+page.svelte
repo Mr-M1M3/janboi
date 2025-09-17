@@ -2,8 +2,6 @@
   import Icon from "@iconify/svelte";
   import { createAuthClient } from "better-auth/svelte";
   const auth_client = createAuthClient();
-  const session = auth_client.useSession();
-  console.log($session);
 </script>
 
 <div class="prose h-full flex flex-col justify-center items-center">
