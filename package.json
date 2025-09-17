@@ -17,7 +17,7 @@
     "worker:gen-ques": "tsx src/lib/workers/gen-ques.worker.ts",
     "worker:gen-outline": "tsx src/lib/workers/gen-outline.worker.ts",
     "worker:gen-lesson": "tsx src/lib/workers/gen-lesson.worker.ts",
-    "worker:all": "concurrently pnpm:worker:gen-*"
+    "worker:all": "concurrently pnpm:worker:gen-*",
     "start": "concurrently 'pnpm:worker:*' 'vite preview --host 0.0.0.0'"
   },
   "devDependencies": {
