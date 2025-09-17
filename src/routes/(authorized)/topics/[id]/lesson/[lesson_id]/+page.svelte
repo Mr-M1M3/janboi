@@ -52,3 +52,16 @@
     </div>
   </div>
 {/if}
+{#if data.data?.lesson.status === "FAILED"}
+  <div class="prose">
+    <h1>We failed to generate a lesson</h1>
+    <form
+      action="?/generate"
+      method="POST"
+      class="w-full h-full flex justify-center items-center"
+      use:enhance
+    >
+      <button type="submit" class="d-btn d-btn-neutral">Generate Again</button>
+    </form>
+  </div>
+{/if}

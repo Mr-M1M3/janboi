@@ -86,6 +86,16 @@
           <Outline outline={topic.outline} />
         </div>
       {/if}
+      {#if topic.outline?.status === "FAILED"}
+        <div class="prose">
+          <h1>We failed to generate an outline.</h1>
+        </div>
+      {/if}
+    {/if}
+    {#if topic?.status === "FAILED"}
+      <div class="prose">
+        <h1>We failed to generate an outline</h1>
+      </div>
     {/if}
   </header>
 {/key}
