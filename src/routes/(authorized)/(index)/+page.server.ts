@@ -13,7 +13,7 @@ export async function load() {
 }
 
 export const actions = {
-  async generate_question({ request }) {
+  async generate_question({ request, locals }) {
     const rec_data = await superValidate(request, valibot(TOPIC_PAYLOAD));
     if (!rec_data.valid) {
       return fail(
@@ -31,6 +31,11 @@ export const actions = {
       const topic = await prisma.topic.create({
         data: {
           name: rec_data.data.topic,
+          user: {
+            connect: {
+              id: locals.session?.user.id,
+            },
+          },
         },
         select: {
           id: true,

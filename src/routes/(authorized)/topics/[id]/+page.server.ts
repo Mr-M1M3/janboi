@@ -8,7 +8,7 @@ import { ANSWER_PAYLOAD } from "./schemas/AnswersPayload.schema.js";
 import type { Entries } from "$lib/types/Entries.type.js";
 import { PrismaClientKnownRequestError } from "$lib/generated/prisma/internal/prismaNamespace.js";
 import { gen_outline_q } from "./producers/gen-outline.producer.js";
-export async function load({ params, depends }) {
+export async function load({ params, depends, locals }) {
   // if the job already done
   depends("topic-state");
   depends("outline-state");
@@ -16,6 +16,9 @@ export async function load({ params, depends }) {
     const topic = await prisma.topic.findUnique({
       where: {
         id: params.id,
+        user: {
+          id: locals.session?.user.id,
+        },
       },
       select: {
         status: true,
@@ -149,7 +152,7 @@ export async function load({ params, depends }) {
 }
 
 export const actions = {
-  async answer({ request }) {
+  async answer({ request, locals }) {
     const rec_data = await superValidate(request, valibot(ANSWER_PAYLOAD));
     if (!rec_data.valid) {
       return fail(
@@ -169,6 +172,9 @@ export const actions = {
     const topic_exists = await prisma.topic.count({
       where: {
         id: rec_data.data.topic_id as string,
+        user: {
+          id: locals.session?.user.id,
+        },
       },
     });
     if (!topic_exists) {
@@ -239,6 +245,9 @@ export const actions = {
         const updated = await prisma.topic.update({
           where: {
             id: payload.topic_id as string,
+            user: {
+              id: locals.session?.user.id,
+            },
           },
           data: {
             status: "GOT_ANS",

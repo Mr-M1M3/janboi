@@ -1,4 +1,4 @@
-import { config } from "dotenv";
+import config from "$lib/config";
 import gemini from "$lib/ai/gemini.ai";
 import { Worker } from "bullmq";
 import {
@@ -8,7 +8,6 @@ import {
 import prisma from "$lib/db.server";
 import { inspect } from "node:util";
 import { safeParse } from "valibot";
-config();
 type GenQuesPayload = {
   topic: string;
   for_topic: string;
@@ -19,10 +18,10 @@ const ques_gen = new Worker<GenQuesPayload, void, string>(
     // eslint-disable-next-line no-useless-catch
     try {
       const questions = await gemini.models.generateContent({
-        contents: `${process.env.GEN_QUES_U_PROMPT} \n ${job.data.topic}`,
+        contents: `${config.app.gen_ques_u_prompt} \n ${job.data.topic}`,
         model: "gemini-2.0-flash",
         config: {
-          systemInstruction: process.env.GEN_QUES_SYS_PROMPT,
+          systemInstruction: config.app.gen_ques_sys_prompt,
           responseJsonSchema: QUES_OUTPUT_JSON_SCHEMA,
           responseMimeType: "application/json",
         },

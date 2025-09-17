@@ -1,4 +1,4 @@
-import { config } from "dotenv";
+import config from "$lib/config";
 import gemini from "$lib/ai/gemini.ai";
 import { Worker } from "bullmq";
 import prisma from "$lib/db.server";
@@ -10,7 +10,6 @@ import {
   OUTLINE_OUTPUT_SCHEMA,
 } from "./schemas/OUTLINE_OUTPUT.schema";
 import { safeParse } from "valibot";
-config();
 type GenOutlinePayload = {
   topic_id: string;
   outline_id: string;
@@ -45,12 +44,12 @@ async function gen_history_and_get_topic_name(
   content.push({
     parts: [
       {
-        text: `${process.env.GEN_QUES_U_PROMPT} \n ${topic.name}`,
+        text: `${config.app.gen_ques_u_prompt} \n ${topic.name}`,
       },
     ],
     role: "user",
   });
-  let gen_ques_resp = `${process.env.GEN_QUES_RESP_META} \n `;
+  let gen_ques_resp = `${config.app.gen_ques_resp_meta} \n `;
   let user_ans_resp = ``;
   topic.questions.forEach((q, i) => {
     gen_ques_resp += `${i}. ${q.title} \n`;
@@ -90,13 +89,13 @@ const outline_gen = new Worker<GenOutlinePayload, void, string>(
         history: history_and_name.history.unwrap(),
         model: "gemini-2.0-flash",
         config: {
-          systemInstruction: process.env.GEN_OUTLINE_SYS_PROMPT,
+          systemInstruction: config.app.gen_outline_sys_prompt,
           responseJsonSchema: OUTLINE_OUTPUT_JSON_SCHEMA,
           responseMimeType: "application/json",
         },
       });
       const outline_output = await chat.sendMessage({
-        message: `${process.env.GEN_OUTLINE_U_PROMPT} \n ${history_and_name.topic_name}`,
+        message: `${config.app.gen_outline_u_prompt} \n ${history_and_name.topic_name}`,
       });
       const outline = safeParse(
         OUTLINE_OUTPUT_SCHEMA,

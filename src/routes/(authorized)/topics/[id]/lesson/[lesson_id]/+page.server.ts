@@ -17,7 +17,7 @@ const md = markdownit()
   .use(mark)
   .use(alert)
   .use(dl);
-export async function load({ params, depends }) {
+export async function load({ params, depends, locals }) {
   depends("lesson-state");
   const { id: topic_id, lesson_id } = params;
   // querying with both lesson and topic id so that users cannot use one topic's lesson using another topic's id
@@ -28,6 +28,9 @@ export async function load({ params, depends }) {
         for_outline: {
           topic: {
             id: topic_id,
+            user: {
+              id: locals.session?.user.id,
+            },
           },
         },
       },
@@ -47,7 +50,7 @@ export async function load({ params, depends }) {
 }
 
 export const actions = {
-  async generate({ params }) {
+  async generate({ params, locals }) {
     const { id: topic_id, lesson_id } = params;
     try {
       // querying with both lesson and topic id so that users cannot use one topic's lesson using another topic's id
@@ -58,6 +61,9 @@ export const actions = {
             for_outline: {
               topic: {
                 id: topic_id,
+                user: {
+                  id: locals.session?.user.id,
+                },
               },
             },
           },

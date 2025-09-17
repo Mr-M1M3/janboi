@@ -1,16 +1,16 @@
 import { inspect } from "util";
+import { auth } from "$lib/better-auth/auth.server";
+import { svelteKitHandler } from "better-auth/svelte-kit";
+import { building } from "$app/environment";
 
 export async function handle({ event, resolve }) {
-  // console.log(
-  //   "received request",
-  //   inspect(await event.request.clone().text(), true, null, true)
-  // );
-  const resp = await resolve(event);
-  // console.log(
-  //   "returning",
-  //   inspect(await resp.clone().text(), true, null, true)
-  // );
-  return resp;
+  // Fetch current session from Better Auth
+  const session = await auth.api.getSession({
+    headers: event.request.headers,
+  });
+  event.locals.session = session ?? null;
+
+  return svelteKitHandler({ event, resolve, auth, building });
 }
 
 export async function handleError(e) {
