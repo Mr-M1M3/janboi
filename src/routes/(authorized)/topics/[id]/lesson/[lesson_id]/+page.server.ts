@@ -9,6 +9,7 @@ import { stylize } from "@mdit/plugin-stylize";
 import { mark } from "@mdit/plugin-mark";
 import { alert } from "@mdit/plugin-alert";
 import { dl } from "@mdit/plugin-dl";
+import { imgMark } from "@mdit/plugin-img-mark";
 
 const mathjaxInstance = createMathjaxInstance();
 const md = markdownit()
@@ -16,7 +17,8 @@ const md = markdownit()
   .use(stylize)
   .use(mark)
   .use(alert)
-  .use(dl);
+  .use(dl)
+  .use(imgMark);
 export async function load({ params, depends, locals }) {
   depends("lesson-state");
   const { id: topic_id, lesson_id } = params;

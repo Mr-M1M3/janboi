@@ -1,7 +1,12 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import { invalidate } from "$app/navigation";
+  import Icon from "@iconify/svelte";
+  import { page } from "$app/state";
   const { data } = $props();
+  function nav_back() {
+    window.history.back();
+  }
   let interval: ReturnType<typeof setInterval>;
   $effect(() => {
     if (data.data?.lesson.status === "GENERATING") {
@@ -36,7 +41,14 @@
   </div>
 {/if}
 {#if data.data?.lesson.status === "GENERATED"}
-  <div class="prose py-2">
-    {@html data.data.lesson.content}
+  <div class="wrapper flex gap-2 py-4">
+    <div>
+      <button onclick={nav_back} class="d-btn d-btn-ghost"
+        ><Icon icon="mdi:arrow-left" class="text-xl" /></button
+      >
+    </div>
+    <div class="prose grow">
+      {@html data.data.lesson.content}
+    </div>
   </div>
 {/if}

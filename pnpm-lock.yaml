@@ -23,6 +23,9 @@ importers:
       '@mdit/plugin-dl':
         specifier: ^0.22.1
         version: 0.22.1(markdown-it@14.1.0)
+      '@mdit/plugin-img-mark':
+        specifier: ^0.22.1
+        version: 0.22.1(markdown-it@14.1.0)
       '@mdit/plugin-mark':
         specifier: ^0.22.1
         version: 0.22.1(markdown-it@14.1.0)
@@ -451,6 +454,15 @@ packages:
 
   '@mdit/plugin-dl@0.22.1':
     resolution: {integrity: sha512-95KmM/8vGjpX+IPcSUno599CfteWJbBaV7aC4iM9nbnzlIvnwcq+D8fGq7B/YlUH4u0OaiCkx9ukBUOImNddKQ==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      markdown-it: ^14.1.0
+    peerDependenciesMeta:
+      markdown-it:
+        optional: true
+
+  '@mdit/plugin-img-mark@0.22.1':
+    resolution: {integrity: sha512-C6i9Tl39pKetoH83XBkj5/hfN+uK6N8Fw8ltyERNki916vzUCci/09NfrT92MF/AfJPoDJQYALy7qdgOVjnT9Q==}
     engines: {node: '>= 18'}
     peerDependencies:
       markdown-it: ^14.1.0
@@ -2736,6 +2748,12 @@ snapshots:
       markdown-it: 14.1.0
 
   '@mdit/plugin-dl@0.22.1(markdown-it@14.1.0)':
+    dependencies:
+      '@types/markdown-it': 14.1.2
+    optionalDependencies:
+      markdown-it: 14.1.0
+
+  '@mdit/plugin-img-mark@0.22.1(markdown-it@14.1.0)':
     dependencies:
       '@types/markdown-it': 14.1.2
     optionalDependencies:
