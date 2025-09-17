@@ -3,7 +3,6 @@ import { superValidate, fail } from "sveltekit-superforms";
 import { valibot } from "sveltekit-superforms/adapters";
 import { TOPIC_PAYLOAD } from "./schemas/TopicPayload.schema.js";
 import { error, isRedirect, redirect } from "@sveltejs/kit";
-import is_the_prompt_safe from "$lib/ai/safety-cheker.ai.js";
 import { gen_ques_q } from "./producers/gen-ques.producer.js";
 import Result from "$lib/utils/result/result.util.js";
 import type { ErrorResponseData } from "$lib/types/ResponseData.type.js";
@@ -16,12 +15,6 @@ export const actions = {
   async generate_question({ request, locals }) {
     const rec_data = await superValidate(request, valibot(TOPIC_PAYLOAD));
     if (!rec_data.valid) {
-      return fail(
-        400,
-        Result.Err({ form: rec_data }).serialize(400, "bad request", rec_data)
-      );
-    }
-    if (!(await is_the_prompt_safe(rec_data.data.topic))) {
       return fail(
         400,
         Result.Err({ form: rec_data }).serialize(400, "bad request", rec_data)
