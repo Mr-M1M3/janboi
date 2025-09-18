@@ -9,7 +9,7 @@ import {
   GOOGLE_OAUTH_CLIENT_SECRET,
 } from "$env/static/private";
 
-export const auth = betterAuth({
+export const auth = (base_url: string) => betterAuth({
   database: prismaAdapter(prisma, {
     provider: "sqlite",
   }),
@@ -26,6 +26,6 @@ export const auth = betterAuth({
       clientSecret: GOOGLE_OAUTH_CLIENT_SECRET,
     },
   },
-  baseURL: "http://localhost:5173",
+  baseURL: base_url,
   basePath: "/api/auth",
 });
