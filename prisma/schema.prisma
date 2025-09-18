@@ -1,4 +1,3 @@
-
 generator client {
   provider   = "prisma-client"
   engineType = "client"
@@ -17,9 +16,10 @@ model Topic {
   status    TopicStatus @default(GENERATING_QUES)
   questions Question[]
   outline   Outline?
-
-  user_id String
-  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id   String
+  user      User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @default(now()) @updatedAt
 
   @@map("topics")
 }
@@ -38,6 +38,8 @@ model Question {
   answer    String?
   for_topic Topic    @relation(fields: [topic_id], references: [id], onDelete: Cascade)
   topic_id  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("questions")
 }
@@ -47,14 +49,18 @@ model Option {
   content      String
   for_question Question? @relation(fields: [question_id], references: [id], onDelete: Cascade)
   question_id  String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now()) @updatedAt
 }
 
 model Outline {
-  id       String        @id @default(uuid())
-  status   OutlineStatus @default(GENERATING)
-  chapters Chapter[]
-  topic    Topic         @relation(fields: [topic_id], references: [id], onDelete: Cascade)
-  topic_id String        @unique
+  id        String        @id @default(uuid())
+  status    OutlineStatus @default(GENERATING)
+  chapters  Chapter[]
+  topic     Topic         @relation(fields: [topic_id], references: [id], onDelete: Cascade)
+  topic_id  String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @default(now()) @updatedAt
 
   @@map("outlines")
 }
@@ -71,6 +77,8 @@ model Chapter {
   for_outline Outline  @relation(fields: [outline_id], references: [id], onDelete: Cascade)
   outline_id  String
   lessons     Lesson[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 
   @@map("chapters")
 }
@@ -82,6 +90,8 @@ model Lesson {
   content     String?
   for_chapter Chapter      @relation(fields: [chapter_id], references: [id], onDelete: Cascade)
   chapter_id  String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now()) @updatedAt
 
   @@map("lessons")
 }

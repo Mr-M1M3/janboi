@@ -8,7 +8,7 @@
 <div class="w-full px-4 h-full flex flex-col justify-center items-center">
   <div>
     <h4 class="text-4xl font-extrabold">What can help you learn? 😎</h4>
-    <p class="text-secondary ext-right">
+    <p class="text-base-content text-right">
       Type any topic you want to learn about and see the magic happen...
     </p>
   </div>

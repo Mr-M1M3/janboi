@@ -13,6 +13,13 @@ export async function load({ locals }) {
       name: true,
     },
     take: 20,
+    orderBy: {
+      createdAt: "asc"
+    }
   });
-  return Result.Ok({ topics }).serialize();
+  const user = locals.session ? {
+    name: locals.session?.user.name,
+    image: locals.session?.user.image
+  } : null;
+  return Result.Ok({ topics, user }).serialize();
 }

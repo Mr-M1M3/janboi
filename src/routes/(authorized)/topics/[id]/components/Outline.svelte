@@ -25,14 +25,16 @@
     <div class="d-collapse-title font-semibold">
       {chapter.name}
     </div>
-    <div class="d-collapse-content text-sm">
+    <div class="d-collapse-content text-sm d-list">
       {#each chapter.lessons as lesson, l_i (lesson.id)}
+        <!-- <div class="d-list-row bg-red-500"> -->
         <a
           href="{page.url.pathname}/lesson/{lesson.id}"
-          class="d-btn d-btn-block d-btn-outline my-2"
+          class="d-btn d-btn-block d-list-row flex justify-center items-center d-btn-outline my-2"
         >
           {lesson.name}
         </a>
+        <!-- </div> -->
       {/each}
     </div>
   </div>

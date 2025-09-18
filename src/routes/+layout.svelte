@@ -5,6 +5,8 @@
   import type { TransitionConfig } from "svelte/transition";
   import logo from "$lib/assets/logo.svg";
   let { data, children } = $props();
+  import { createAuthClient } from "better-auth/svelte";
+  const auth_client = createAuthClient();
   let is_sidebar_active = $state(false);
   type TransitionOpt = {
     duration?: number;
@@ -12,7 +14,7 @@
   };
   function sidebar_transition(
     node: HTMLElement,
-    opt?: TransitionOpt
+    opt?: TransitionOpt,
   ): TransitionConfig {
     return {
       duration: opt?.duration ?? 200,
@@ -33,22 +35,46 @@
   <nav
     class="brand h-12 flex gap-2 justify-between items-center px-2 shadow d-rounded-box mb-2"
   >
-    <div>
-      <label for="sidebar" class="flex cursor-pointer lg:hidden">
-        <input
-          type="checkbox"
-          id="sidebar"
-          bind:checked={is_sidebar_active}
-          hidden
-        />
-        <Icon icon="lucide:menu" class="text-xl" />
-      </label>
+    <div class="wrapper flex justify-center items-center gap-2">
+      <div>
+        <label for="sidebar" class="flex cursor-pointer lg:hidden">
+          <input
+            type="checkbox"
+            id="sidebar"
+            bind:checked={is_sidebar_active}
+            hidden
+          />
+          <Icon icon="lucide:menu" class="text-xl" />
+        </label>
+      </div>
+      <div class="flex gap-2">
+        <a href="/"> <img src={logo} alt="logo" class="h-8 w-8" /></a>
+      </div>
     </div>
-    <div class="d-navbar-center gro flex gap-2">
-      <a href="/"> <img src={logo} alt="logo" class="h-8 w-8" /></a>
-      <!-- <h1 class="uppercase">Janboi</h1> -->
-    </div>
+    {#if data.data?.user}
+      <div class="avatar flex justify-center items-center">
+        <div class="p-4 w-14 rounded-full">
+          <img
+            src={data.data?.user.image}
+            alt="profile picture of {data.data?.user.name}"
+            class="w-full h-full rounded-full"
+          />
+        </div>
+        <div class="logout-btn d-tooltip d-tooltip-bottom" data-tip="Logout">
+          <button
+            class="d-btn d-btn-ghost"
+            onclick={async () => {
+              await auth_client.signOut();
+              window.location.reload();
+            }}
+          >
+            <Icon icon="ic:outline-logout" />
+          </button>
+        </div>
+      </div>
+    {/if}
   </nav>
+  <!-- <img src={data.data?.user.image} alt="" /> -->
   <div class="wrapper flex flex-row gap-2 h-[calc(100%-3rem-1rem)]">
     {#key is_sidebar_active}
       <div
