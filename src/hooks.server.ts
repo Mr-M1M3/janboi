@@ -6,7 +6,6 @@ import { url } from "inspector";
 
 export async function handle({ event, resolve }) {
   // Fetch current session from Better Auth
-  console.log(`\n\n\n\n\n\n${event.url.host}\n\n\n\n`);
   const session = await auth(event.url.origin).api.getSession({
     headers: event.request.headers,
   });
