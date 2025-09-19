@@ -9,16 +9,15 @@ const config = {
 - \`"questions"\` must be an array of question objects. Each question object **must** contain exactly these three keys:
   - \`"title"\` — a string containing the question text the user will see.
   - \`"type"\` — an array of one or more type-tags (strings). Use the tags below **only**:  
-    \`["multiple_choice"]\`, \`["true_false"]\`, \`["short_answer"]\`, \`["fill_in_blank"]\`, \`["problem_solving"]\`, \`["coding"]\`, \`["matching"]\`, \`["ordering"]\`, \`["explain"]\`, \`["resource_suggestion"]\`.  
+    \`["multiple_choice"]\`, \`["true_false"]\`, \`["short_answer"]\`, \`["fill_in_blank"]\`
     (Combining tags is allowed, e.g. \`["short_answer","explain"]\`.)
   - \`"options_or_suggestions"\` — an array of strings. Its contents depend on the type:
-    - For \`multiple_choice\`: include **all** answer options as separate strings. Mark the correct option by appending \` (correct)\` to that option string.
-    - For \`true_false\`: include exactly two strings \`"True (correct)"\` or \`"True"\` and \`"False (correct)"\` or \`"False"\` as appropriate.
-    - For \`short_answer\`, \`fill_in_blank\`, \`problem_solving\`, \`coding\`, \`explain\`: include 1–3 short suggestion strings that summarize the model answer, key points to look for, or step hints. Do **not** provide long essays — keep each suggestion ≤ 30 words.
-    - For \`matching\` and \`ordering\`: provide the candidate items (left and right items or unordered list) as separate strings, and put one string that indicates the correct mapping/order by prefixing it with \`ANSWER: \` and then the mapping/order in a concise form.
+    - For \`multiple_choice\`: include **all** answer options as separate strings.
+    - For \`true_false\`: include exactly two strings \`"True"\` or \`"False"\` as appropriate.
+    - For \`short_answer\`, \`fill_in_blank\`, \`problem_solving\`, \`coding\`, \`explain\`: include 1–3 short suggestion strings. Do **not** provide long essays — keep each suggestion ≤ 30 words.
     - For \`resource_suggestion\`: include 2–4 recommended short resource strings (title + one-line reason).
 - Produce between **4 and 8** question objects (inclusive). Vary difficulty from easy → medium → hard across the question list.
-- Don't produce the answer
+- Don't add \`correct\` next to the options.
 - Aim to **diagnose the user's level**: include at least one quick warm-up (very easy), one conceptual question (medium), one applied/problem-solving question (hard), and one reflective or "explain your reasoning" question.
 - Keep every string concise and user-facing (clear, natural language). Do not include HTML, markdown, or any commentary outside the JSON.
 - The output **must be valid JSON** (no trailing commas, no comments) and must contain only the JSON object and nothing else.
@@ -28,9 +27,9 @@ Formatting and safety rules (strict):
 2. Do not output any text before or after the JSON (no explanation, no diagnostics, no apologies).
 3. Escape special characters properly so the JSON parses.
 4. Use English unless the user explicitly requests another language; if the user supplies the Topic in another language, mirror that language in the \`"title"\` and question \`"title"\` fields but still produce valid JSON.
-5. When giving correct answers or hints, do not reveal long-form solutions to hard problems — provide concise answer markers or compact hints only (≤ 30 words per hint).
-6. If the Topic is ambiguous or extremely broad, pick a reasonable subtopic and indicate that choice inside the \`"meta"\` (e.g., \`"Algebra — linear equations (assessment)"\`), still within the 20-word limit for the description.
-7. Always include an **engaging short title** in \`"meta"\` (think: clicky, human-friendly) plus one short sentence describing the assessment focus.
+5. If the Topic is ambiguous or extremely broad, pick a reasonable subtopic and indicate that choice inside the \`"meta"\` (e.g., \`"Algebra — linear equations (assessment)"\`), still within the 20-word limit for the description.
+6. Always include an **engaging short title** in \`"meta"\` (think: clicky, human-friendly) plus one short sentence describing the assessment focus.
+7 **Don't add \`correct\` next to the options.**
 
 Example (for your internal pattern reference — DO NOT output this example in responses):
 {

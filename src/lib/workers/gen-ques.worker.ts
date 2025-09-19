@@ -24,7 +24,7 @@ const ques_gen = new Worker<GenQuesPayload, void, string>(
     try {
       const questions = await gemini.models.generateContent({
         contents: `${config.app.gen_ques_u_prompt} \n ${job.data.topic}`,
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         config: {
           systemInstruction: config.app.gen_ques_sys_prompt,
           responseJsonSchema: QUES_OUTPUT_JSON_SCHEMA,

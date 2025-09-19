@@ -134,7 +134,7 @@ const lesson_gen = new Worker<GenLessonPayload, void, string>(
     try {
       const chat = gemini.chats.create({
         history: history_and_lesson_name.history.unwrap(),
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-pro",
         config: {
           systemInstruction: config.app.gen_lesson_sys_prompt,
           responseJsonSchema: LESSON_OUTPUT_JSON_SCHEMA,

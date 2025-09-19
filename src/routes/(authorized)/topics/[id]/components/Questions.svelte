@@ -58,7 +58,7 @@
   };
   function card_transistion(
     node: HTMLDivElement,
-    opt: CardTransitionParams
+    opt: CardTransitionParams,
   ): TransitionConfig {
     const style = getComputedStyle(node);
     const transform = style.transform === "none" ? "" : style.transform;
@@ -147,7 +147,9 @@
                           suggestion.content as string;
                       }}
                     >
-                      {suggestion.content}
+                      {(suggestion.content as string)
+                        .toString()
+                        .replace(/\(correct\)/gi, "")}
                     </li>
                   {/each}
                 </ul>
