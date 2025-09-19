@@ -4,6 +4,9 @@
   const auth_client = createAuthClient();
 </script>
 
+<svelte:head>
+  <title>Janboi - Login to Continue</title>
+</svelte:head>
 <div class="prose h-full flex flex-col justify-center items-center">
   <h1>Login to Continue</h1>
   <button

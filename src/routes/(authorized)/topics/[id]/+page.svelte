@@ -37,14 +37,17 @@
       data.data ? data.data.form : data.details ? data.details.form : {},
       {
         dataType: "json",
-      }
-    )
+      },
+    ),
   );
 </script>
 
+<svelte:head>
+  <title>{topic?.meta}</title>
+</svelte:head>
 <Toaster richColors />
 {#key data}
-  <header class="w-full m-auto h-full px-2 py-4">
+  <header class="w-full h-full flex justify-center items-center px-2 py-4">
     {#if topic?.status === "GENERATING_QUES"}
       <div class="h-full w-full flex gap-4 justify-center items-center">
         <h1 class="d-loading d-loading-ring d-loading-xl">Loading...</h1>
@@ -52,7 +55,7 @@
       </div>
     {/if}
     {#if topic?.status === "GETTING_ANS"}
-      <div class="h-full d-card d-card-border">
+      <div class="h-full w-full d-card d-card-border">
         <div class="d-card-body">
           <div>
             <h1 class="d-card-title text-2xl text-neutral">
@@ -75,7 +78,9 @@
     {/if}
     {#if topic?.status === "GOT_ANS"}
       {#if topic.outline?.status === "GENERATING"}
-        <div class="h-full w-full flex gap-4 justify-center items-center">
+        <div
+          class="w-full h-full h-full w-full flex gap-4 justify-center items-center"
+        >
           <h1 class="d-loading d-loading-ring d-loading-xl">Loading...</h1>
           <p>Generating outline, You can close this page and visit later...</p>
         </div>

@@ -39,7 +39,7 @@ Example (for your internal pattern reference — DO NOT output this example in r
     {
       "title": "What is 3/4 + 1/8?",
       "type": ["multiple_choice"],
-      "options_or_suggestions": ["7/8 (correct)","1 (not correct)","5/8","3/8"]
+      "options_or_suggestions": ["7/8","1","5/8","3/8"]
     },
     ...
   ]

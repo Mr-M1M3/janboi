@@ -3,7 +3,7 @@
   import favicon from "$lib/assets/favicon.svg";
   import Icon from "@iconify/svelte";
   import type { TransitionConfig } from "svelte/transition";
-  import logo from "$lib/assets/logo.svg";
+  import logo from "$lib/assets/favicon.svg";
   let { data, children } = $props();
   import { createAuthClient } from "better-auth/svelte";
   const auth_client = createAuthClient();
@@ -107,7 +107,7 @@
       ></div>
     {/key}
     <div
-      class="grow content {is_sidebar_active
+      class="grow content overflow-y-auto {is_sidebar_active
         ? 'opacity-50 blur-sm pointer-events-none select-none'
         : ''}"
     >
