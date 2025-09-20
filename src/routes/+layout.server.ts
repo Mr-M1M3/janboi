@@ -14,7 +14,7 @@ export async function load({ locals }) {
     },
     take: 20,
     orderBy: {
-      createdAt: "asc"
+      createdAt: "desc"
     }
   });
   const user = locals.session ? {
