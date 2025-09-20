@@ -3,22 +3,42 @@ import Result from "$lib/utils/result/result.util.js";
 import { error, fail, isHttpError, isActionFailure } from "@sveltejs/kit";
 import type { ErrorResponseData } from "$lib/types/ResponseData.type";
 import { gen_lesson_q } from "./producers/gen-lesson.producer.js";
-import markdownit from "markdown-it";
-import { createMathjaxInstance, mathjax } from "@mdit/plugin-mathjax";
-import { stylize } from "@mdit/plugin-stylize";
-import { mark } from "@mdit/plugin-mark";
-import { alert } from "@mdit/plugin-alert";
-import { dl } from "@mdit/plugin-dl";
-import { imgMark } from "@mdit/plugin-img-mark";
+import rehypeFormat from 'rehype-format';
+import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
+import rehypeStringify from 'rehype-stringify';
+import remarkDirective from 'remark-directive';
+import remarkFrontmatter from 'remark-frontmatter';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import rehypeMathjax from 'rehype-mathjax';
+import { remarkDefinitionList, defListHastHandlers } from 'remark-definition-list';
+import { remarkExtendedTable, extendedTableHandlers } from 'remark-extended-table';
+import { unified } from 'unified'
 
-const mathjaxInstance = createMathjaxInstance();
-const md = markdownit()
-  .use(mathjax, mathjaxInstance)
-  .use(stylize)
-  .use(mark)
-  .use(alert)
-  .use(dl)
-  .use(imgMark);
+const processor = unified()
+  .use(remarkParse)
+  .use(remarkDirective)
+  .use(remarkFrontmatter)
+  .use(remarkGfm)
+  .use(remarkMath)
+  .use(remarkDefinitionList)
+  .use(remarkExtendedTable)
+  .use(remarkRehype, {
+    allowDangerousHtml: true, handlers: {
+      // any other handlers
+      ...defListHastHandlers,
+      ...extendedTableHandlers,
+
+    }
+  })
+  .use(rehypeRaw)
+  .use(rehypeFormat)
+  .use(rehypeSanitize)
+  .use(rehypeMathjax)
+  .use(rehypeStringify)
 export async function load({ params, depends, locals }) {
   depends("lesson-state");
   const { id: topic_id, lesson_id } = params;
@@ -47,7 +67,7 @@ export async function load({ params, depends, locals }) {
       >
     );
   }
-  lesson.content = md.render(lesson.content || "");
+  lesson.content = String(await processor.process(lesson.content || ""))
   return Result.Ok({ lesson }).serialize();
 }
 

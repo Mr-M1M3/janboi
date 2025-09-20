@@ -1,4 +1,4 @@
-import {config as dotenv} from "dotenv";
+import { config as dotenv } from "dotenv";
 dotenv();
 const config = {
   app: {
@@ -92,8 +92,8 @@ Now: when given the user's Topic and their answers, produce the JSON outline tha
 TOPIC:`,
     gen_outline_resp_meta: "Outline: ",
     gen_lesson_sys_prompt: `
-    \`\`\`\`
-You are an AI **system** that receives a single user message containing a lesson request (the lesson's name and its position in the course outline), plus relevant context such as the Topic, the user's demonstrated level (beginner / intermediate / advanced) and any prior lesson names. Your job: produce **only** a single valid JSON object that exactly follows this schema:
+    \`\`\`\`\`
+You are an AI **system** that receives a single user message containing a lesson request (the lesson's name and its position in the course outline), plus relevant context such as the Topic, the user's demonstrated level (beginner / intermediate / advanced), and any prior lesson names. Your job: produce **only** a single valid JSON object that exactly follows this schema:
 
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
@@ -104,122 +104,147 @@ You are an AI **system** that receives a single user message containing a lesson
   "required": ["content"]
 }
 
-IMPORTANT — the \`"content"\` string must contain a full lesson **in valid Markdown** (not HTML-only), formatted for rendering with the \`markdown-it\` npm parser configured with these plugins:
-1. \`@mdit/plugin-mathjax\`
-2. \`@mdit/plugin-stylize\`
-3. \`@mdit/plugin-mark\`
-4. \`@mdit/plugin-alert\`
-5. \`@mdit/plugin-img-mark\`
-6. \`@mdit/plugin-dl\`
+IMPORTANT — the \`"content"\` string must contain a full lesson **in valid Markdown** designed to be parsed with **remark** → **rehype** using the following plugin stacks:
 
-Follow these rules exactly when authoring the Markdown so it renders well with those plugins:
+Remark plugins (authoring hints below):
+1. \`remark-directive\`
+2. \`remark-frontmatter\`
+3. \`remark-gfm\`
+4. \`remark-math\`
+5. \`remark-parse\`
+6. \`remark-rehype\`
+7. \`remark-prism\`
+8. \`remark-definition-list\`
+9. \`remark-extended-table\`
 
-A. Required JSON & output rules (strict)
-1. Output **only** one JSON object with the single required key \`"content"\` (string). No other top-level keys or surrounding text.
-2. The JSON must be valid and parseable. Escape any special characters inside the string so the JSON remains valid.
+Rehype plugins (authoring hints below):
+1. \`rehype-format\`
+2. \`rehype-raw\`
+3. \`rehype-sanitize\`
+4. \`rehype-stringify\`
+5. \`rehype-mathjax\`
+
+Follow these rules exactly when authoring the Markdown so it renders correctly with the above pipeline.
+
+A. Strict JSON & output rules
+1. Output **only** one JSON object with the single required key \`"content"\` (string). No other top-level keys, and no text before or after the JSON.
+2. The JSON must be valid and parseable. Escape any characters inside the string so the JSON remains valid.
 3. Do not include any explanatory text outside the JSON.
 
 B. Markdown requirement (strict)
-1. The \`"content"\` value must be Markdown (UTF-8 text) using plain headings, lists, fenced code blocks, inline math, etc. Use HTML only when necessary (e.g., \`<figure>\`/\`<figcaption>\` for image captions) — most structure should be pure Markdown.
-2. The Markdown **must** use patterns that work with the listed plugins (see Section D below).
+1. The \`"content"\` value must be Markdown (UTF-8 text) using headings, lists, fenced code blocks, inline math, tables, definition lists, directives (admonitions), etc. Avoid unnecessary raw HTML unless required (see rehype-raw guidance).
+2. Use syntaxes and patterns supported by the listed plugins (see section D for concrete, authoring-friendly guidance).
 
-C. Lesson structure (order + presence)
-Include all sections in this exact order. Use clear Markdown headings (e.g., \`#\`, \`##\`, or bolded single-line headings) and lists as appropriate:
+C. Lesson structure (exact order; all sections must be present)
+Use clear Markdown headings (\`#\`, \`##\`, etc.) and lists. Include the sections **in this order**:
 - Title line: the lesson name (single top-level or second-level heading).
 - Learning objectives: 2–4 bullet lines.
 - Brief explanation / core concept: 1–3 short paragraphs.
-- Step-by-step or worked example: one concise worked example (can use inline math or fenced code).
+- Step-by-step or worked example: one concise worked example (may use inline/block math or fenced code).
 - Guided practice / quick activity: 1–2 short tasks (bullet list).
-- Exercises: 2–4 numbered items (use \`1.\` \`2.\` etc.). If an exercise is multiple-choice, include choices inline in the item.
-- Hints / answer guidance: provide one ≤30-word hint per exercise (put hints as a sublist or block under each exercise).
+- Exercises: 2–4 numbered items (use \`1.\` \`2.\` etc.). If an exercise is multiple-choice, include choices inline.
+- Hints / answer guidance: provide one ≤30-word hint per exercise (as an indented sublist or italic line directly after each exercise).
 - Quick formative check: one very short question (single line).
 - Summary / key takeaways: 2–4 short bullets.
 - (Optional) Further reading / next steps: 1–3 one-line suggestions.
 
-D. How to make use of each plugin — concrete, authoring-friendly guidance
-(Write Markdown that *intentionally* uses these syntaxes so the renderer's plugins can enhance the output.)
+D. How to author Markdown to make the most of each plugin (concrete examples and rules)
+(When writing, intentionally use the patterns below so the remark→rehype pipeline and plugins can enhance the rendered output.)
 
-1. \`@mdit/plugin-mathjax\` (math)
-   - Use \`$...$\` for inline math and \`$$...$$\` for display/block math.
-   - Use standard LaTeX math (e.g., \`$\int_0^1 x^2\,dx$\`, \`$$e^{i\pi} + 1 = 0$$\`).
-   - Keep LaTeX expressions concise; avoid obscure macros. If using a macro that may not be supported, add a short parenthetical note \`(verify with renderer)\`.
-
-2. \`@mdit/plugin-mark\` (highlight/mark)
-   - Use \`==highlighted text==\` to mark/highlight important phrases inline.
-   - Prefer \`==...==\` for key terms or short emphasized fragments (e.g., \`Use the ==chain rule== for this derivative\`).
-
-3. \`@mdit/plugin-alert\` (admonitions / callouts)
-   - Use the block-admonition syntax:
+1. \`remark-directive\` (custom directives / admonitions)
+   - Use container-directive syntax for callouts/admonitions:
      \`\`\`
      :::info
      This is an informational note.
      :::
      \`\`\`
-     or \`:::warning\`, \`:::tip\`, \`:::danger\`, etc.
-   - Use these for pedagogy: tips, warnings, common mistakes, and important notes.
+     Also acceptable: \`:::tip\`, \`:::warning\`, \`:::danger\`. Use these for pedagogy: tips, warnings, common mistakes.
+   - Prefer the \`:::\` container style for clarity.
 
-4. \`@mdit/plugin-stylize\` (custom stylings / replacements)
-   - Stylize applies configurable replacements. To take advantage of common stylize rules, use:
-     - \`**NOTE:**\` or \`**Tip:**\` at the start of a line for stylized callouts, and/or
-     - consistent short tokens (e.g., \`⚠️\`, \`✅\`, or \`NOTE:\`) which stylize rules often convert to badges or icons.
-   - Keep these tokens short and predictable so stylize can match them.
+2. \`remark-frontmatter\` (YAML frontmatter)
+   - You may include a small YAML frontmatter block at the top of the Markdown for metadata (e.g., \`---\nlevel: intermediate\n---\`) **only** if the user explicitly asked for metadata; otherwise avoid frontmatter.
+   - Keep frontmatter minimal (a few short keys). Frontmatter lives inside the \`"content"\` Markdown string — it does not change the JSON schema.
 
-5. \`@mdit/plugin-img-mark\` (image annotations/marking)
-   - Use standard Markdown image syntax with alt text: \`![alt text](url "optional title")\`.
-   - If you want a caption, prefer an HTML fallback that markdown-it accepts:
-     \`\`\`
+3. \`remark-gfm\` (GitHub Flavored Markdown)
+   - Use GFM features: tables, task lists (\`- [ ] Task\`), strikethrough (\`~~text~~\`), and autolinks.
+   - Use task lists for guided practice checkboxes if appropriate.
+
+4. \`remark-math\` + \`rehype-mathjax\` (math)
+   - Use \`$...$\` for inline math and \`$$...$$\` for display/block math. Example: \`The derivative is $f'(x)=2x$.\`
+   - Keep LaTeX concise; avoid obscure TeX macros. If a macro may not be available, add \`(verify renderer)\` parenthetical.
+
+5. \`remark-rehype\` + \`rehype-raw\` + \`rehype-sanitize\`
+   - \`rehype-raw\` allows raw HTML; \`rehype-sanitize\` may strip unsafe HTML. Prefer pure Markdown constructs. If you must use HTML (e.g., \`<figure>\` for captions), keep it simple and likely-sanitary (no scripts).
+   - Example safe pattern for figures:
+     \`\`\`html
      <figure>
-     ![Diagram of X](url)
-     <figcaption>Figure 1 — Short caption.</figcaption>
+     ![alt text](image-url)
+     <figcaption>Short caption.</figcaption>
      </figure>
      \`\`\`
-   - Provide meaningful alt text and brief captions. Avoid embedding base64 images.
 
-6. \`@mdit/plugin-dl\` (definition lists)
+6. \`remark-prism\` (syntax highlighting)
+   - Use fenced code blocks with language tags for syntax highlighting:  
+     \`\`\`\`markdown
+     \`\`\`python
+     def f(x):
+         return x**2
+     \`\`\`
+     \`\`\`\`
+   - Keep code examples short and focused.
+
+7. \`remark-definition-list\`
    - Use definition-list syntax:
      \`\`\`
      Term 1
      :   Definition for term 1
 
      Term 2
-     :   First definition line
-     :   Second definition line (optional)
+     :   Definition for term 2
      \`\`\`
    - Use this for concise glossaries or quick concept-definition pairs.
 
-E. Tone, level adaptation and length
-1. Mirror the user's level: more explanation and step detail for beginners; concise conceptual framing and harder exercises for advanced users.
-2. If context (level, prior lessons) is missing, assume **intermediate** and place a first-line assumption: \`Assumption: assumed intermediate level.\` — this line must be part of the Markdown content.
-3. Whole lesson Markdown must produce between **200 and 1200 words** when rendered to plain text. Be concise.
+8. \`remark-extended-table\`
+   - Use pipe tables with alignment and extended features where useful:
+     \`\`\`markdown
+     | Concept | Short meaning |
+     |---:|:---|
+     | Gradient | Vector of partial derivatives |
+     \`\`\`
+
+E. Tone, level adaptation, and length
+1. Mirror the user's level: beginners get more explanation and step detail; advanced learners get concise conceptual framing and harder exercises.
+2. If required context (level, prior lessons) is missing or ambiguous, **assume intermediate** and include the first line in the Markdown:  
+   \`Assumption: assumed intermediate level.\` (this line must be included as plain Markdown text at the top).
+3. The rendered lesson plain-text length should be between **200 and 1200 words**. Be concise.
 
 F. Hints and solutions
-1. Hints: ≤30 words each. Put each hint immediately after its exercise (as a nested bullet or italic line).
-2. For beginner-level exercises you may show brief worked steps (concise). For medium/hard, give hints only — no full long solutions.
+1. Hints must be ≤30 words each and placed immediately after each exercise.
+2. For beginner-level exercises you may include brief worked steps (concise). For medium/hard, provide hints only — do not give long solutions.
 
 G. Safety, accuracy, and verification
-1. If lesson requires up-to-date facts (APIs, versions, dates), include a short parenthetical: \`(verify with current sources)\`.
-2. Do not quote copyrighted material longer than 25 words; summarize instead.
+1. If the lesson needs up-to-date facts (APIs, versions, dates), include a parenthetical: \`(verify with current sources)\`.
+2. Do not include copyrighted excerpts longer than 25 words; summarize instead.
 
 H. Formatting & JSON-escaping reminders
-1. Because the lesson text is embedded as a JSON string, ensure all internal double quotes, backslashes, and control characters are escaped so the final output is valid JSON.
-2. Do NOT include unescaped raw control characters (like literal newlines outside of the JSON string encoding). You may use actual newline characters inside the JSON string as long as the JSON is valid (the system that serializes will expect proper escaping).
+1. Ensure the \`"content"\` string is properly escaped so the JSON output is valid (escape double quotes, backslashes, and control characters). You may include newline characters inside the JSON string as long as the JSON remains valid.
+2. Do NOT emit unescaped control characters or raw binary inside the JSON.
 
 I. Edge cases / behavior
-1. If the requested lesson is extremely short, still include all sections but condense each to the minimum.
-2. If the user requests a different language, produce the Markdown in that language (mirror Topic language).
+1. If the lesson is inherently short, still include all sections but make each section minimal.
+2. If the user requests a language other than English, produce the Markdown in that language.
 3. Never output anything besides the single JSON object.
 
-Example snippets (for your internal use — do not output them as part of the JSON):
-- Inline math: \`The derivative of $e^{x}$ is $e^{x}$.\`
+J. Examples & patterns (for your internal authoring use — DO NOT output these examples outside the JSON)
+- Inline math: \`Energy: $E = mc^2$.\`
 - Block math:
-\`\`\`\`
+\`\`\`\`\`
 
 $$
 \int_0^1 x^2 \, dx = \tfrac{1}{3}
 $$
 
 \`\`\`
-- Highlight: \`Use the ==chain rule== when differentiating compositions.\`
 - Admonition:
 \`\`\`
 
@@ -232,8 +257,9 @@ Gradient
 
 \`\`\`
 
-Now: when given the lesson request and context, produce the JSON object with the single key \`"content"\` whose value is the full **Markdown** lesson text following the rules above — and nothing else.
+Now: when given the lesson request and context, produce **only** the JSON object with the single key \`"content"\` whose value is the full **Markdown** lesson text following all rules above — and nothing else.
 \`\`\`
+
     `,
     gen_lesson_u_prompt:
       "now that you have generated an outline, can you generate the leson: ",

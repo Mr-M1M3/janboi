@@ -2,7 +2,6 @@
   import { enhance } from "$app/forms";
   import { invalidate } from "$app/navigation";
   import Icon from "@iconify/svelte";
-  import { page } from "$app/state";
   const { data } = $props();
   function nav_back() {
     window.history.back();
@@ -50,7 +49,7 @@
       >
     </div>
     <div class="prose px-2">
-      {@html data.data.lesson.content}
+      {@html data.data?.lesson.content}
     </div>
   </div>
 {/if}
