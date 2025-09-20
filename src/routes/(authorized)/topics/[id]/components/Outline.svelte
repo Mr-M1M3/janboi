@@ -21,7 +21,7 @@
     tabindex={i}
     class="d-collapse d-collapse-arrow bg-base-100 border-base-300 border my-2"
   >
-    <input type="checkbox" />
+    <input type="checkbox" name="outline-open-{i}" />
     <div class="d-collapse-title font-semibold">
       {chapter.name}
     </div>

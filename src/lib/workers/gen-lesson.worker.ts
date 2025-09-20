@@ -148,7 +148,7 @@ const lesson_gen = new Worker<GenLessonPayload, void, string>(
       for await (const chunk of lesson_output) {
         message_from_ai += chunk.text;
       }
-
+      message_from_ai = String(message_from_ai);
       const lesson = safeParse(
         LESSON_OUTPUT_SCHEMA,
         JSON.parse(message_from_ai || "")
